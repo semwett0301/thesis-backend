@@ -1,8 +1,7 @@
 package com.example.api;
 
 import com.example.City;
-import com.example.model.dto.request.TicketEnum;
-import com.example.model.dto.response.TicketResponse;
+import com.example.model.dto.response.AccommodationResponse;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,10 +11,9 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-public class TicketsController {
+public class AccommodationsController {
     @GetMapping
-    public List<TicketResponse> getTickets(
-            @RequestParam(name = "type") TicketEnum ticketType,
+    public List<AccommodationResponse> getAccommodations(
             @RequestParam(name = "start_date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date startDate,
             @RequestParam(name = "end_date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date endDate,
             @RequestParam(name = "max_price") Integer maxPrice,
