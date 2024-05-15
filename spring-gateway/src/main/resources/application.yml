@@ -1,0 +1,45 @@
+server:
+  port: 7000
+
+spring:
+  application:
+    name: API-GATEWAY
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:3000"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+            allowedHeaders: "*"
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/api/v1/auth/**
+        - id: route-service
+          uri: lb://ROUTE-SERVICE
+          predicates:
+            - Path=/api/v1/cities/**
+            - Path=/api/v1/routes/**
+        - id: accommodation-service
+          uri: lb://ACCOMMODATION-SERVICE
+          predicates:
+            - Path=/api/v1/accommodations/**
+        - id: ticket-service
+          uri: lb://TICKET-SERVICE
+          predicates:
+            - Path=/api/v1/tickets/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8081/eureka

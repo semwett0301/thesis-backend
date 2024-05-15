@@ -1,0 +1,13 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: eureka-server
+  profiles:
+    active: development
+  config:
+    import: configserver:http://localhost:8888
+  cloud:
+    config:
+      username: admin
+      password: admin
