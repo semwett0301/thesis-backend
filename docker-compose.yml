@@ -1,0 +1,23 @@
+version: "3.2"
+services:
+  thesis-db:
+    image: postgres
+    container_name: thesis-db
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=thesisdb
+    volumes:
+      - .:/dump.sql
+      - thesisdb-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U habrpguser -d habrdb" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  thesisdb-data:
