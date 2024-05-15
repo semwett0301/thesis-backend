@@ -1,11 +1,11 @@
-package com.example.model.dto.request;
+package com.example;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class CityRequest {
+public class City {
     private String iata;
     private String title;
 }
