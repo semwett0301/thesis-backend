@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: API-GATEWAY
+    name: SPRING-GATEWAY
   cloud:
     gateway:
       globalcors:
