@@ -3,6 +3,7 @@ package com.example.api;
 import com.example.model.dto.request.RouteRequest;
 import com.example.model.dto.response.RouteResponse;
 import com.example.model.dto.response.SavedRoutesResponse;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -11,7 +12,7 @@ import java.util.UUID;
 @RequestMapping("/routes")
 public class RoutesController {
     @PostMapping
-    public RouteResponse createRoute(@RequestBody RouteRequest routeRequest) {
+    public RouteResponse createRoute(@Valid @RequestBody RouteRequest routeRequest) {
         return null;
     }
 

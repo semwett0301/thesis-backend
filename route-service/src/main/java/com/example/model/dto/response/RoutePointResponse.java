@@ -3,6 +3,7 @@ package com.example.model.dto.response;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Date;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -13,7 +14,7 @@ public class RoutePointResponse {
     private String description;
     private CoordsResponse coords;
     private String url;
-    private String date;
+    private Date date;
     private String startTime;
     private String endTime;
 }

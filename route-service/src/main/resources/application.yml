@@ -1,0 +1,21 @@
+server:
+  port: 0
+
+spring:
+  application:
+    name: STUDY-GROUP-SERVICE
+  datasource:
+    url: jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:5432}/${DATABASE_NAME:thesisdb}
+    username: ${DATABASE_USERNAME:admin}
+    password: ${DATABASE_PASSWORD:admin}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+eureka:
+  client:
+    registerWithEureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8081/eureka
