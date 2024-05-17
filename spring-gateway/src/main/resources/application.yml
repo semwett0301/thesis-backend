@@ -21,23 +21,29 @@ spring:
           enabled: true
           lower-case-service-id: true
       routes:
-        - id: auth-service
-          uri: lb://AUTH-SERVICE
-          predicates:
-            - Path=/api/v1/auth/**
         - id: route-service
           uri: lb://ROUTE-SERVICE
+          order: 3
           predicates:
-            - Path=/api/v1/cities/**
-            - Path=/api/v1/routes/**
+            - Path=/api/v1/**
+            - Path=/api/v1/**
+            - Path=/api/v1/**
+          filters:
+            - StripPrefix=3
         - id: accommodation-service
           uri: lb://ACCOMMODATION-SERVICE
+          order: 2
           predicates:
             - Path=/api/v1/accommodations/**
+          filters:
+            - StripPrefix=3
         - id: ticket-service
           uri: lb://TICKET-SERVICE
+          order: 1
           predicates:
             - Path=/api/v1/tickets/**
+          filters:
+            - StripPrefix=3
 
 eureka:
   client:

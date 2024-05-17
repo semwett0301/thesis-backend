@@ -7,5 +7,5 @@ import lombok.Getter;
 @Getter
 public class City {
     private String iata;
-    private String title;
+    private String name;
 }
