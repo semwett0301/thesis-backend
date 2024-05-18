@@ -1,4 +1,4 @@
-package com.example.model.entity;
+package com.example.model.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -18,6 +18,9 @@ public class RoutePoint extends BaseEntity {
 
     @NotNull
     private Integer latitude;
+
+    @NotNull
+    private Integer longitude;
 
     @NotNull
     private String url;

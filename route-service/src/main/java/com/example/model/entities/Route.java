@@ -1,4 +1,4 @@
-package com.example.model.entity;
+package com.example.model.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.util.Date;
-import java.util.List;
 
 @Data
 @Entity

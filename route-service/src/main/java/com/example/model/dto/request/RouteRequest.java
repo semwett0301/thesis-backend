@@ -1,6 +1,6 @@
 package com.example.model.dto.request;
 
-import com.example.City;
+import com.example.CityDto;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -12,10 +12,10 @@ import java.util.Date;
 @Getter
 public class RouteRequest {
     @NotNull
-    private City start_city;
+    private CityDto start_city;
 
     @NotNull
-    private City end_city;
+    private CityDto end_city;
 
     @NotNull
     private Date start_date;
@@ -24,6 +24,7 @@ public class RouteRequest {
     private Date end_date;
 
     @NotNull
+    @Min(5000)
     private double transport_price;
 
     @NotNull
@@ -31,6 +32,5 @@ public class RouteRequest {
     private double accommodation_price;
 
     @NotNull
-    @Min(5000)
     private String additional_information;
 }

@@ -1,6 +1,6 @@
 package com.example.api;
 
-import com.example.City;
+import com.example.CityDto;
 import jakarta.validation.constraints.Min;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +13,7 @@ import java.util.List;
 @RequestMapping("/cities")
 public class CitiesController {
     @GetMapping
-    public List<City> getCities(
+    public List<CityDto> getCities(
             @RequestParam(name = "search") String search,
             @RequestParam(name = "page") @Min(1) Integer page,
             @RequestParam(name = "page_size") @Min(1) String pageSize

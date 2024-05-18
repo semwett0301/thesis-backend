@@ -1,9 +1,22 @@
 server:
   port: 0
 
+yandex-gpt:
+  uri: "https://llm.api.cloud.yandex.net/foundationModels/v1/completion"
+  iam-token: "t1.9euelZqNnM7Ky5WcmJ2Ni8adlpebnO3rnpWazYyMx5bPmZqdjseXyZ6XyZDl8_ctF1xN-e88Ak9m_t3z921FWU357zwCT2b-zef1656VmpPKi5aKzMmPlZqUlpTGjJmU7_zN5_XrnpWaxo7HnZbPmJXOl5ybyZGblcvv_cXrnpWak8qLlorMyY-VmpSWlMaMmZQ.xWtKmvewQ2hHGLQzcZkkhdDF1bCyhRIRsLaL5AvTTNwd2XNm4Tni2HpntF7CiwQHzwsLKvHP2HAHQoEarsv7BQ"
+  model-uri: "gpt://b1g3bmolh8ou09grrbt8/yandexgpt/latest"
+  stream: false
+  temperature: 0.3
+  maxTokens: 3000
+
+jwt:
+  access-time: 600000
+  refresh-time: 600000000
+  secret-key: ${SECRET_KEY:aPdSgVkYp3s6v9y$B&E)H+MbQeThWmZq4t7w!z%C*F-JaNcRfUjXn2r5u8x/A?D(G+KbPeSgVkYp3s6v9y$B&E)H@McQfTjWmZq4t7w!z%C*F-JaNdRgUkXp2r5u8x/A?D(G+KbPeShVmYq3t6v9y$B&E)H@McQfTjWnZr4u7x!z%C*F-JaNdRgUkXp2s5v8y/B?D(G+KbPeShVmYq3t6w9z$C&F)H@McQfTjWnZr4u7x!A%D*G-KaNdRgUkXp2s5v8y/B?E(H+MbQeShVmYq3t6w9z$C&F)J@NcRfUjWnZr4u7x!A%D*G-KaPdSgVkYp2s5v8y/B?E(H+MbQeThWmZq4t6w9z$C&F)J@NcRfUjXn2r5u8x!A%D*G-KaPdSgVkYp3s6v9y$B?E(H+MbQeThWmZq4t7w!z%C*F)J@NcRfUjXn2r5u8x/A?D(G+KaPdSgVkYp3s6v9y$B&E)H@McQeThWmZq4t7w!z%C*F-JaNdRgUkXn2r5u8x/A?D(G+}
+
 spring:
   application:
-    name: STUDY-GROUP-SERVICE
+    name: ROUTE-SERVICE
   datasource:
     url: jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:5432}/${DATABASE_NAME:thesisdb}
     username: ${DATABASE_USERNAME:admin}

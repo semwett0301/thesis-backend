@@ -3,11 +3,9 @@ server:
 spring:
   application:
     name: eureka-server
-  profiles:
-    active: development
-  config:
-    import: configserver:http://localhost:8888
-  cloud:
-    config:
-      username: admin
-      password: admin
+eureka:
+  client:
+    fetch-registry: false
+    service-url:
+      defaultZone: http://localhost:8081/eureka
+    register-with-eureka: false

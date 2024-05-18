@@ -26,10 +26,8 @@ spring:
           order: 3
           predicates:
             - Path=/api/v1/**
-            - Path=/api/v1/**
-            - Path=/api/v1/**
           filters:
-            - StripPrefix=3
+            - StripPrefix=2
         - id: accommodation-service
           uri: lb://ACCOMMODATION-SERVICE
           order: 2
