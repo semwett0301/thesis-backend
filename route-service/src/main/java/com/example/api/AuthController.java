@@ -1,7 +1,6 @@
 package com.example.api;
 
 import com.example.model.dto.request.AuthRequest;
-import com.example.model.dto.request.RefreshRequest;
 import com.example.model.dto.response.AuthResponse;
 import com.example.services.AuthService.AuthService;
 import jakarta.validation.Valid;
@@ -35,7 +34,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public AuthResponse postRefresh(@Valid @RequestBody RefreshRequest refreshRequest) {
+    public AuthResponse postRefresh(@Valid @RequestBody AuthRequest refreshRequest) {
         return authService.refreshToken(refreshRequest);
     }
 }

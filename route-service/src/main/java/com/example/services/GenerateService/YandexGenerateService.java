@@ -91,13 +91,13 @@ public class YandexGenerateService implements GenerateService {
         resultBuilder.append(" по ");
         resultBuilder.append(df.format(request.getEnd_date()));
 
-        resultBuilder.append(" минимум с 5 точками маршрута на каждый день.");
+        resultBuilder.append(" с 5 точками маршрута.");
 
         if (request.getAdditional_information() != null) {
             resultBuilder.append(" Учти следующие пожелания: ");
             resultBuilder.append(request.getAdditional_information());
         }
-        resultBuilder.append(" В ответе пришли массив из точек маршрута в формате JSON. Структура точки маршрута является следующей: { 'name': 'название точки маршрута', 'description': 'описание точки маршрута', 'latitude': 'Координата долготы для точки маршрута', 'longitude': 'Координата широты для точки маршрута', 'url': 'Ссылка на ресурс с описанием точки маршрута', 'date': 'Дата посещения точки в формате UTC', 'startTime': 'Время начала посещения точки в формате HH:mm','endTime': 'Время окончания посещения точки в формате HH:mm'}");
+        resultBuilder.append(" В ответе пришли массив из точек маршрута в формате JSON. Структура точки маршрута является следующей: { 'name': 'название точки маршрута', 'description': 'максимально подробное описание точки маршрута', 'latitude': 'Координата долготы для точки маршрута', 'longitude': 'Координата широты для точки маршрута', 'url': 'Ссылка на ресурс с описанием точки маршрута', 'date': 'Дата посещения точки в формате UTC', 'startTime': 'Время начала посещения точки в формате HH:mm','endTime': 'Время окончания посещения точки в формате HH:mm'}");
 
         return resultBuilder.toString();
     }

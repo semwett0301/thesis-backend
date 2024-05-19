@@ -1,6 +1,13 @@
 server:
   port: 0
 
+aviasales:
+  uri: https://api.travelpayouts.com/aviasales/v3/
+  token: 129691c2d364db5f8aea5b915173cad6
+  logos-uri: https://pics.avs.io/200/200/
+  source-name: Aviasales
+  source: https://aviasales.ru
+
 spring:
   application:
     name: TICKET-SERVICE

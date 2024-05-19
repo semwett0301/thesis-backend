@@ -1,7 +1,6 @@
 package com.example.services.AuthService;
 
 import com.example.model.dto.request.AuthRequest;
-import com.example.model.dto.request.RefreshRequest;
 import com.example.model.dto.response.AuthResponse;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +27,7 @@ public class ThesisAuthService implements AuthService{
     }
 
     @Override
-    public AuthResponse refreshToken(RefreshRequest refreshRequest) {
+    public AuthResponse refreshToken(AuthRequest refreshRequest) {
         return null;
     }
 }
