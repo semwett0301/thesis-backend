@@ -1,7 +1,7 @@
 package com.example.security.config;
 
 import com.example.model.utils.Role;
-import com.example.security.filters.AuthorizationFilter;
+import com.example.security.filters.AuthentitcationFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @AllArgsConstructor
 public class SecurityConfiguration {
     private AuthenticationProvider authenticationProvider;
-    private AuthorizationFilter authorizationFilter;
+    private AuthentitcationFilter authentitcationFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -26,11 +26,12 @@ public class SecurityConfiguration {
                     request
                             .requestMatchers("/routes/saved").hasAuthority(Role.USER.toString())
                             .requestMatchers("/routes/{id}/save").hasAuthority(Role.USER.toString())
+                            .requestMatchers("/auth/me").hasAuthority(Role.USER.toString())
                             .anyRequest().permitAll();
                 }).sessionManagement(session -> {
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 }).authenticationProvider(authenticationProvider).addFilterAt(
-                        authorizationFilter, UsernamePasswordAuthenticationFilter.class
+                        authentitcationFilter, UsernamePasswordAuthenticationFilter.class
                 );
 
         return http.build();

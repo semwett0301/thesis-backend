@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -13,25 +14,33 @@ import java.util.Date;
 public class Route extends BaseEntity {
     @NotNull
     @Temporal(TemporalType.DATE)
-    private Date start_date;
+    @Column(name = "start_date")
+    private Date startDate;
 
     @NotNull
     @Temporal(TemporalType.DATE)
-    private Date end_date;
+    @Column(name = "end_date")
+    private Date endDate;
 
     @NotNull
     @Min(5000)
-    private double transport_price;
+    @Column(name = "transport_price")
+    private double transportPrice;
 
     @NotNull
     @Min(5000)
-    private double accommodation_price;
+    @Column(name = "accommodation_price")
+    private double accommodationPrice;
 
-    private String additional_information;
+    @Column(name = "additional_information")
+    private String additionalInformation;
 
     @NotNull
-    @Column(columnDefinition = "boolean default false")
-    private Boolean is_saved;
+    @Column(name = "is_saved", columnDefinition = "boolean default false")
+    private Boolean isSaved;
+
+    @OneToMany
+    private List<RoutePoint> routePoints;
 
     @ManyToOne
     @JoinColumn(name = "username", nullable = false)
@@ -44,5 +53,4 @@ public class Route extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "end_city_id", nullable = false)
     private City endCity;
-
 }

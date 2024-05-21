@@ -3,7 +3,7 @@ server:
 
 yandex-gpt:
   uri: "https://llm.api.cloud.yandex.net/foundationModels/v1/completion"
-  iam-token: "t1.9euelZqZk42alsbMnorPy5COzMuajO3rnpWazYyMx5bPmZqdjseXyZ6XyZDl8_dYeFdN-e8qN0FJ_t3z9xgnVU357yo3QUn-zef1656Vmo2Lm8rIjpyKlprOipSMicyY7_zN5_XrnpWaxo7HnZbPmJXOl5ybyZGblcvv_cXrnpWajYubysiOnIqWms6KlIyJzJg.dxFxRB1V5RQORK4fhlsmomY6gB9BNFVcb5a2U9H2QjZbllyQL8DdXNOrL1Swv7063tv1-f2G0sPGbQyHOwNdAg"
+  iam-token: "t1.9euelZqcnZeYjo6Pz4_HycyNypWbmu3rnpWazYyMx5bPmZqdjseXyZ6XyZDl8_c6FVVN-e9WJ0d3_N3z93pDUk3571YnR3f8zef1656Vms6JkMaKkMzKnImQks3Nm8uM7_zN5_XrnpWaxo7HnZbPmJXOl5ybyZGblcvv_cXrnpWazomQxoqQzMqciZCSzc2by4w.SCQos0D5ulliaEgBhOu087BwFobN6G6QVMvQ1PBQCux6es8UNACwlWrqNCOtffq-XRkHNTaMIaamlKjYePnzDQ"
   model-uri: "gpt://b1g3bmolh8ou09grrbt8/yandexgpt/latest"
   stream: false
   temperature: 0.3
@@ -17,10 +17,18 @@ jwt:
 spring:
   application:
     name: ROUTE-SERVICE
+  data:
+    redis:
+      database: 16
+      host: localhost
+      port: 6379
+      password: redis-password
+      timeout: 60000
+
   datasource:
-    url: jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:5432}/${DATABASE_NAME:postgres}
-    username: ${DATABASE_USERNAME:user}
-    password: ${DATABASE_PASSWORD:password}
+    url: jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:5432}/${DATABASE_NAME:thesisdb}
+    username: ${DATABASE_USERNAME:admin}
+    password: ${DATABASE_PASSWORD:admin}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

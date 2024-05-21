@@ -3,12 +3,12 @@ package com.example.services.TicketsService;
 import com.example.model.dto.exceptions.AviasalesException;
 import com.example.model.dto.internal.AviasalesInternalRequest;
 import com.example.model.dto.internal.TicketsInternalRequest;
+import com.example.model.dto.mappers.TicketMapper;
 import com.example.model.dto.response.TicketResponse;
 import com.example.utils.AviasalesApi.AviasalesApi;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,36 +46,11 @@ public class AviasalesTicketsService implements TicketsService {
         var success = response.getSuccess();
         var tickets = response.getData();
 
-        var df = new SimpleDateFormat("HH:mm");
 
         if (success) {
             return tickets.stream()
-                    .filter(aviasalesTicket -> aviasalesTicket.getPrice() <= ticketsInternalRequest.getMaxPrice() / 2 + 1)
-                    .map(aviasalesTicket -> {
-                        var companyName = aviasalesTicket.getAirline();
-                        var subLink = aviasalesTicket.getLink();
-
-                        var logoUrl = """
-                                {logosUrl}{companyName}.png
-                                """;
-
-                        var link = """
-                                {source}{link}
-                                """;
-
-                        return new TicketResponse(
-                                logoUrl,
-                                aviasalesTicket.getPrice(),
-                                sourceName,
-                                ticketsInternalRequest.getStartCity(),
-                                ticketsInternalRequest.getEndCity(),
-                                df.format(aviasalesTicket.getDepartureAt()),
-                                df.format(aviasalesTicket.getReturnAt()),
-                                aviasalesTicket.getOrigin(),
-                                aviasalesTicket.getDestinationAirport(),
-                                link
-                        );
-                    })
+                    .filter(aviasalesTicket -> aviasalesTicket.getPrice() <= ticketsInternalRequest.getMaxPrice())
+                    .map(aviasalesTicket -> TicketMapper.toTicketResponse(source, logosUrl, sourceName, aviasalesTicket, ticketsInternalRequest))
                     .collect(Collectors.toList());
         } else {
             throw new AviasalesException();

@@ -20,7 +20,7 @@ import java.util.Optional;
 
 @Component
 @AllArgsConstructor
-public class AuthorizationFilter extends OncePerRequestFilter {
+public class AuthentitcationFilter extends OncePerRequestFilter {
     private final JwtUtils jwtUtils;
     private final UserDetailsService userDetailsService;
 
@@ -45,9 +45,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             final String token = authorizationHeader.substring(7);
 
-            if (request.getCookies() != null) {
-                return jwtUtils.getDecodedJwt(token);
-            }
+            return jwtUtils.getDecodedJwt(token);
         }
 
         return Optional.empty();

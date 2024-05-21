@@ -17,10 +17,10 @@ public class RoutePoint extends BaseEntity {
     private String description;
 
     @NotNull
-    private Integer latitude;
+    private Double latitude;
 
     @NotNull
-    private Integer longitude;
+    private Double longitude;
 
     @NotNull
     private String url;

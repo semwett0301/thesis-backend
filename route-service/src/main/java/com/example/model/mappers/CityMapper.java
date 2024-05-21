@@ -10,4 +10,6 @@ public interface CityMapper {
     CityMapper INSTANCE = Mappers.getMapper(CityMapper.class);
 
     CityDto toCityDto(City book);
+
+    City toCity(CityDto book);
 }
