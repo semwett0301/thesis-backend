@@ -2,6 +2,7 @@ package com.example.services.GenerateService;
 
 import com.example.model.dto.external.gpt.GptMessage;
 import com.example.model.dto.external.gpt.GptRequest;
+import com.example.model.dto.external.gpt.GptResponse;
 import com.example.model.dto.external.gpt.GptRole;
 import com.example.model.dto.internal.GeneratedRoutePoint;
 import com.example.model.dto.request.RouteRequest;
@@ -13,23 +14,22 @@ import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class YandexGenerateService implements GenerateService {
-    private final String gptContext = "Ты ассистент по путешествиям. Ты умеешь формировать маршруты от точки к точке по городу по часам, при этом учитывая последовательность времени и расстояние между точками. Все ответы ты отдаешь только в JSON формате и не умеешь писать обычный текст";
-
     private final GptApi gptApi;
     private final Gson gson;
 
     private final String modelUri;
 
-    private final Boolean stream;
+    private final GptRequest.CompletionOptions completionOptions;
 
-    private final Double temperature;
-
-    private final Integer maxTokens;
+    private final DateFormat df = new SimpleDateFormat("dd.MM");
+    private final DateFormat localDf = new SimpleDateFormat("yyyy-MM-dd");
 
     public YandexGenerateService(GptApi gptApi, Gson gson,
                                  @Value("${yandex-gpt.model-uri}") String modelUri,
@@ -39,38 +39,52 @@ public class YandexGenerateService implements GenerateService {
         this.gptApi = gptApi;
         this.gson = gson;
         this.modelUri = modelUri;
-        this.stream = stream;
-        this.temperature = temperature;
-        this.maxTokens = maxTokens;
+        this.completionOptions = new GptRequest.CompletionOptions(stream, temperature, maxTokens);
     }
 
     @Override
     public List<GeneratedRoutePoint> generate(RouteRequest request) throws GptNotWorkingException {
+        final var requestMessages = getStartMessages(request);
 
-        var completionOptions = new GptRequest.CompletionOptions(stream, temperature, maxTokens);
-        var requestMessages = getRequestMessages(request);
         var gptRequest = new GptRequest(modelUri, completionOptions, requestMessages);
         var gptResponse = gptApi.getAnswerFromGpt(gptRequest);
 
+        final var firstRoutePoints = getRoutePointsFromMessage(gptResponse.getFirstMessage().orElseThrow(GptNotWorkingException::new));
+        final List<GeneratedRoutePoint> result = new ArrayList<>(firstRoutePoints);
 
-        var gptResponseMessage = gptResponse.getResult().getAlternatives().get(0);
+        final LocalDate startLocalDate = LocalDate.parse(localDf.format(request.getStart_date()));
+        final LocalDate endLocalDate = LocalDate.parse(localDf.format(request.getEnd_date()));
 
-        if (gptResponseMessage != null) {
-            var message = gptResponseMessage.getMessage().getText();
-            var json = message.substring(message.lastIndexOf('['), message.lastIndexOf(']') + 1);
-            var pointsArray = gson.fromJson(json, GeneratedRoutePoint[].class);
+        for (LocalDate date = startLocalDate; date.isBefore(endLocalDate); date = date.plusDays(1)) {
+            var continueRequestMessage = getContinueUserMessage(date);
+            requestMessages.add(gptResponse.getFirstMessage().orElseThrow(GptNotWorkingException::new).getMessage());
+            requestMessages.add(new GptMessage(GptRole.USER, continueRequestMessage));
 
-            return List.of(pointsArray);
+            gptRequest = new GptRequest(modelUri, completionOptions, requestMessages);
+            gptResponse = gptApi.getAnswerFromGpt(gptRequest);
+            result.addAll(getRoutePointsFromMessage(gptResponse.getFirstMessage().orElseThrow(GptNotWorkingException::new)));
         }
 
-        throw new GptNotWorkingException();
+        return result;
     }
 
-    private List<GptMessage> getRequestMessages(RouteRequest request) {
+    private List<GeneratedRoutePoint> getRoutePointsFromMessage(GptResponse.MessageWrapper message) {
+        var text = message.getMessage().getText();
+        var json = text.substring(text.lastIndexOf('['), text.lastIndexOf(']') + 1);
+        return List.of(gson.fromJson(json, GeneratedRoutePoint[].class));
+    }
+
+    private List<GptMessage> getStartMessages(RouteRequest request) {
         final List<GptMessage> result = new ArrayList<>();
 
+        final String gptContext = "Ты ассистент по путешествиям. Ты умеешь формировать маршруты от точки к точке по городу по часам, при этом учитывая последовательность времени и расстояние между точками. Все ответы ты отдаешь только в JSON формате и не умеешь писать обычный текст";
+
+        final Optional<String> additional = request.getAdditional_information() != null ? Optional.of(request.getAdditional_information()) : Optional.empty();
+
         final GptMessage systemMessage = new GptMessage(GptRole.SYSTEM, gptContext);
-        final GptMessage userMessage = new GptMessage(GptRole.SYSTEM, getUserMessage(request));
+        final GptMessage userMessage = new GptMessage(GptRole.SYSTEM, getStartUserMessage(LocalDate.parse(localDf.format(request.getStart_date())),
+                request.getEnd_city().getName(),
+                additional));
 
         result.add(systemMessage);
         result.add(userMessage);
@@ -78,27 +92,31 @@ public class YandexGenerateService implements GenerateService {
         return result;
     }
 
-    private String getUserMessage(RouteRequest request) {
-        DateFormat df = new SimpleDateFormat("dd.MM");
-        StringBuilder resultBuilder = new StringBuilder();
+    private String getContinueUserMessage(LocalDate date) {
+        final var dateString = df.format(date);
 
-        resultBuilder.append("Составь маршрут по городу ");
-        resultBuilder.append(request.getEnd_city().getName());
+        return """
+                Сгенерируй ещё 5 точек на {dateString} с учетом тех же пожеланий
+                """;
+    }
 
-        resultBuilder.append(" c ");
-        resultBuilder.append(df.format(request.getStart_date()));
+    private String getStartUserMessage(LocalDate date, String city, Optional<String> additionalInformation) {
+        final var dateString = df.format(date);
 
-        resultBuilder.append(" по ");
-        resultBuilder.append(df.format(request.getEnd_date()));
+        final var mainText = """
+                Составь маршрут по городу {city} на {dateString} с 5 точками маршрута.
+                """;
 
-        resultBuilder.append(" с 5 точками маршрута.");
-
-        if (request.getAdditional_information() != null) {
-            resultBuilder.append(" Учти следующие пожелания: ");
-            resultBuilder.append(request.getAdditional_information());
+        var additionalText = "";
+        if (additionalInformation.isPresent()) {
+            var info = additionalInformation.get();
+            additionalText = """
+                    Учти следующие пожелания: {info}
+                    """;
         }
-        resultBuilder.append(" В ответе пришли массив из точек маршрута в формате JSON. Структура точки маршрута является следующей: { 'name': 'название точки маршрута', 'description': 'максимально подробное описание точки маршрута', 'latitude': 'Координата долготы для точки маршрута', 'longitude': 'Координата широты для точки маршрута', 'url': 'Ссылка на ресурс с описанием точки маршрута', 'date': 'Дата посещения точки в формате UTC', 'startTime': 'Время начала посещения точки в формате HH:mm','endTime': 'Время окончания посещения точки в формате HH:mm'}");
 
-        return resultBuilder.toString();
+        final var ending = " В ответе пришли массив из точек маршрута в формате JSON. Структура точки маршрута является следующей: { 'name': 'название точки маршрута', 'description': 'максимально подробное описание точки маршрута', 'latitude': 'Координата долготы для точки маршрута', 'longitude': 'Координата широты для точки маршрута', 'url': 'Ссылка на ресурс с описанием точки маршрута', 'date': 'Дата посещения точки в формате UTC', 'startTime': 'Время начала посещения точки в формате HH:mm','endTime': 'Время окончания посещения точки в формате HH:mm'}";
+
+        return mainText + additionalText + ending;
     }
 }
