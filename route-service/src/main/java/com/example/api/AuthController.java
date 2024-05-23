@@ -1,7 +1,10 @@
 package com.example.api;
 
 import com.example.model.dto.request.AuthRequest;
+import com.example.model.dto.request.RefreshRequest;
 import com.example.model.dto.response.AuthResponse;
+import com.example.model.dto.response.UserResponse;
+import com.example.security.model.AuthenticationToken;
 import com.example.services.AuthService.AuthService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -14,8 +17,8 @@ public class AuthController {
     private final AuthService authService;
 
     @GetMapping("/me")
-    public AuthResponse getMe() {
-        return authService.getCurrentUser("");
+    public UserResponse getMe(AuthenticationToken auth) {
+        return authService.getUserByUsername(auth.getPrincipal());
     }
 
     @PostMapping("/login")
@@ -34,7 +37,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public AuthResponse postRefresh(@Valid @RequestBody AuthRequest refreshRequest) {
+    public AuthResponse postRefresh(@Valid @RequestBody RefreshRequest refreshRequest) {
         return authService.refreshToken(refreshRequest);
     }
 }

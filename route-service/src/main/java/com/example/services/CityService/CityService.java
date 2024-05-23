@@ -1,6 +1,6 @@
 package com.example.services.CityService;
 
-import com.example.model.entities.City;
+import com.example.model.entities.db.City;
 import jakarta.validation.constraints.Min;
 import org.springframework.data.domain.Page;
 

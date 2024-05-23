@@ -1,6 +1,6 @@
 package com.example.api;
 
-import com.example.model.entities.City;
+import com.example.model.entities.db.City;
 import com.example.services.CityService.CityService;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;

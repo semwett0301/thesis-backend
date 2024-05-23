@@ -1,8 +1,8 @@
 package com.example.security.services;
 
-import com.example.model.entities.UserInfo;
+import com.example.model.entities.db.UserInfo;
 import com.example.model.utils.Role;
-import com.example.repositories.UserRepository;
+import com.example.repositories.db.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;

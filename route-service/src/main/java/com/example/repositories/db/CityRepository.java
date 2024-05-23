@@ -1,6 +1,6 @@
-package com.example.repositories;
+package com.example.repositories.db;
 
-import com.example.model.entities.City;
+import com.example.model.entities.db.City;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

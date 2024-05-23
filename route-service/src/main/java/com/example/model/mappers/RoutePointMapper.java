@@ -3,7 +3,7 @@ package com.example.model.mappers;
 import com.example.model.dto.internal.GeneratedRoutePoint;
 import com.example.model.dto.response.CoordsResponse;
 import com.example.model.dto.response.RoutePointResponse;
-import com.example.model.entities.RoutePoint;
+import com.example.model.entities.db.RoutePoint;
 
 import java.util.UUID;
 

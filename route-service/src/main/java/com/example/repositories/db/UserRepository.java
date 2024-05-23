@@ -1,11 +1,10 @@
-package com.example.repositories;
+package com.example.repositories.db;
 
-import com.example.model.entities.UserInfo;
+import com.example.model.entities.db.UserInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserInfo, String> {

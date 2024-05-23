@@ -1,4 +1,4 @@
-package com.example.model.entities;
+package com.example.model.entities.db;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;

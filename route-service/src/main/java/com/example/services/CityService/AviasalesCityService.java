@@ -1,7 +1,7 @@
 package com.example.services.CityService;
 
-import com.example.model.entities.City;
-import com.example.repositories.CityRepository;
+import com.example.model.entities.db.City;
+import com.example.repositories.db.CityRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

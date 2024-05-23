@@ -1,7 +1,7 @@
 package com.example.model.mappers;
 
 import com.example.CityDto;
-import com.example.model.entities.City;
+import com.example.model.entities.db.City;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
