@@ -8,8 +8,13 @@ import org.springframework.data.redis.core.RedisHash;
 
 @EqualsAndHashCode(callSuper = true)
 @RedisHash("RefreshToken")
+@Getter
+@Setter
 public class RefreshToken extends BaseToken {
-    public RefreshToken(String token, String username, Boolean isActive) {
+    private String fingerPrint;
+
+    public RefreshToken(String token, String username, String fingerPrint, Boolean isActive) {
         super(token, username, isActive);
+        this.fingerPrint = fingerPrint;
     }
 }

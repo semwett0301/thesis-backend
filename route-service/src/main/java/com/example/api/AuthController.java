@@ -22,8 +22,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public AuthResponse postLogin(@Valid @RequestBody AuthRequest authRequest) {
-        return authService.loginUser(authRequest);
+    public AuthResponse postLogin(@Valid @RequestBody AuthRequest authRequest, @RequestHeader(name = "X-Finger-Print", required = true) String fingerPrint) {
+        return authService.loginUser(authRequest, fingerPrint);
     }
 
     @PostMapping("/logout")
@@ -32,12 +32,12 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public AuthResponse postRegister(@Valid @RequestBody AuthRequest authRequest) {
-        return authService.registerUser(authRequest);
+    public AuthResponse postRegister(@Valid @RequestBody AuthRequest authRequest, @RequestHeader(name = "X-Finger-Print", required = true) String fingerPrint) {
+        return authService.registerUser(authRequest, fingerPrint);
     }
 
     @PostMapping("/refresh")
-    public AuthResponse postRefresh(@Valid @RequestBody RefreshRequest refreshRequest) {
-        return authService.refreshToken(refreshRequest);
+    public AuthResponse postRefresh(@Valid @RequestBody RefreshRequest refreshRequest, @RequestHeader(name = "X-Finger-Print", required = true) String fingerPrint) {
+        return authService.refreshToken(refreshRequest, fingerPrint);
     }
 }

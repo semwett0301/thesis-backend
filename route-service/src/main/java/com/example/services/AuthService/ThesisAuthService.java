@@ -37,17 +37,17 @@ public class ThesisAuthService implements AuthService {
     private final Supplier<ResponseStatusException> unauthorizedExceptionHandler = () -> new ResponseStatusException(UNAUTHORIZED, "Unauthorized");
 
     @Override
-    public AuthResponse loginUser(AuthRequest authRequest) {
+    public AuthResponse loginUser(AuthRequest authRequest, String fingerPrint) {
         var user = checkUser(authRequest);
 
-        return createTokens(user.getUsername());
+        return createTokens(user.getUsername(), fingerPrint);
     }
 
     @Override
-    public AuthResponse registerUser(AuthRequest authRequest) {
+    public AuthResponse registerUser(AuthRequest authRequest, String fingerPrint) {
         var user = createUser(authRequest);
 
-        return createTokens(user.getUsername());
+        return createTokens(user.getUsername(), fingerPrint);
     }
 
     @Override
@@ -63,30 +63,33 @@ public class ThesisAuthService implements AuthService {
     }
 
     @Override
-    public AuthResponse refreshToken(RefreshRequest refreshRequest) {
+    public AuthResponse refreshToken(RefreshRequest refreshRequest, String fingerPrint) {
         var refreshToken = refreshTokenRepository.findById(refreshRequest.getRefresh())
                 .orElseThrow(unauthorizedExceptionHandler);
 
-        if (refreshToken.getIsActive()) {
-            disableToken(refreshToken);
-            refreshTokenRepository.save(refreshToken);
+        var isValid = refreshToken.getIsActive() && fingerPrint.equals(refreshToken.getFingerPrint());
 
-            return createTokens(refreshToken.getUsername());
+        disableAccessTokensByUsername(refreshToken.getUsername());
+        disableRefreshTokensByUsername(refreshToken.getUsername());
+
+        if (isValid) {
+            refreshTokenRepository.save(refreshToken);
+            return createTokens(refreshToken.getUsername(), fingerPrint);
         }
 
         throw unauthorizedExceptionHandler.get();
     }
 
-    private AuthResponse createTokens(String username) {
+    private AuthResponse createTokens(String username, String fingerPrint) {
         var access = createAccessToken(username);
-        var refresh = createRefreshToken(username);
+        var refresh = createRefreshToken(username, fingerPrint);
 
         return new AuthResponse(access.getToken(), refresh.getToken());
     }
 
-    private RefreshToken createRefreshToken(String username) {
+    private RefreshToken createRefreshToken(String username, String fingerPrint) {
         var tokenHash = jwtUtils.createJWTRefreshToken(username);
-        var token = new RefreshToken(tokenHash, username, true);
+        var token = new RefreshToken(tokenHash, username, fingerPrint, true);
         refreshTokenRepository.save(token);
 
         return token;

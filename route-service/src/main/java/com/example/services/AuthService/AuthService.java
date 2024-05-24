@@ -6,9 +6,9 @@ import com.example.model.dto.response.AuthResponse;
 import com.example.model.dto.response.UserResponse;
 
 public interface AuthService {
-    AuthResponse loginUser(AuthRequest authRequest);
-    AuthResponse registerUser(AuthRequest authRequest);
+    AuthResponse loginUser(AuthRequest authRequest, String fingerPrint);
+    AuthResponse registerUser(AuthRequest authRequest, String fingerPrint);
     UserResponse getUserByUsername(String username);
     void logoutUser(String username);
-    AuthResponse refreshToken(RefreshRequest refreshRequest);
+    AuthResponse refreshToken(RefreshRequest refreshRequest, String fingerPrint);
 }
