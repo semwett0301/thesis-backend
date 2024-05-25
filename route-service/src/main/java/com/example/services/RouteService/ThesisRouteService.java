@@ -13,9 +13,11 @@ import com.example.repositories.db.UserRepository;
 import com.example.services.GenerateService.GenerateService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Date;
 import java.util.UUID;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -64,7 +66,7 @@ public class ThesisRouteService implements RouteService {
 
     @Override
     public SavedRoutesResponse getRoutes() {
-        var routes = routeRepository.findAll();
+        var routes = routeRepository.findByStartDateBefore(new Date());
 
         var routesRecently = routes.stream()
                 .filter(route -> !route.getIsSaved())
@@ -87,6 +89,13 @@ public class ThesisRouteService implements RouteService {
         routeRepository.save(route);
 
         return RouteMapper.createRouteResponse(route);
+    }
+
+    @Scheduled(cron = "${routes.clear-cron}", zone = "${routes.timezone}")
+    public void clearRoutes() {
+        var routesNotSaved = routeRepository.findByIsSavedOrStartDateBefore(false, new Date());
+        routeRepository.deleteAll(routesNotSaved);
+        System.out.println("COMPLETE");
     }
 
     private RouteResponse getRouteResponseAfterGeneration(RouteRequest routeRequest) throws GptNotWorkingException {

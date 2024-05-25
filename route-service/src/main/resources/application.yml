@@ -9,6 +9,10 @@ yandex-gpt:
   temperature: 0.3
   maxTokens: 3000
 
+routes:
+  clear-cron: "0 0 0 * * *"
+  timezone: "Europe/Moscow"
+
 jwt:
   access-time: 600000
   refresh-time: 600000000
