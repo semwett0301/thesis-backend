@@ -109,7 +109,7 @@ public class YandexGenerateService implements GenerateService {
 
         var additionalText = "";
         if (additionalInformation.isPresent()) {
-            var info = additionalInformation.get();
+            var info = additionalInformation.get().replaceAll("\n+", " ");
             additionalText = MessageFormat.format("Учти следующие пожелания: {0}", info);
         }
 

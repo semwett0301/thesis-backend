@@ -8,6 +8,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface RouteRepository extends JpaRepository<Route, UUID> {
-    List<Route> findByStartDateBefore(Date date);
+    List<Route> findByStartDateAfter(Date date);
     List<Route> findByIsSavedOrStartDateBefore(Boolean isSave, Date date);
 }

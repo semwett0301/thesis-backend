@@ -8,6 +8,7 @@ import com.example.model.exceptions.GptNotWorkingException;
 import com.example.model.mappers.RouteMapper;
 import com.example.model.mappers.RoutePointMapper;
 import com.example.repositories.db.CityRepository;
+import com.example.repositories.db.RoutePointRepository;
 import com.example.repositories.db.RouteRepository;
 import com.example.repositories.db.UserRepository;
 import com.example.services.GenerateService.GenerateService;
@@ -17,6 +18,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
@@ -29,6 +31,7 @@ public class ThesisRouteService implements RouteService {
 
     private UserRepository userRepository;
     private RouteRepository routeRepository;
+    private RoutePointRepository routePointRepository;
     private CityRepository cityRepository;
 
     @Override
@@ -38,6 +41,7 @@ public class ThesisRouteService implements RouteService {
     }
 
     @Override
+    @Transactional
     public RouteResponse createRoute(RouteRequest routeRequest, String username) throws GptNotWorkingException {
         var routeResponse = getRouteResponseAfterGeneration(routeRequest);
 
@@ -57,8 +61,13 @@ public class ThesisRouteService implements RouteService {
 
             route.setIsSaved(false);
 
-            route = routeRepository.save(route);
-            routeResponse.setId(route.getId());
+            final var routeResult = routeRepository.save(route);
+            routeResponse.setId(routeResult.getId());
+
+            var routePointsEntities = routeResponse.getRoute_points().stream()
+                    .map(routePointResponse -> RoutePointMapper.createRoutePoint(routePointResponse, routeResult))
+                    .toList();
+            routePointRepository.saveAll(routePointsEntities);
         }
 
         return routeResponse;
@@ -66,7 +75,7 @@ public class ThesisRouteService implements RouteService {
 
     @Override
     public SavedRoutesResponse getRoutes() {
-        var routes = routeRepository.findByStartDateBefore(new Date());
+        var routes = routeRepository.findByStartDateAfter(getYesterday());
 
         var routesRecently = routes.stream()
                 .filter(route -> !route.getIsSaved())
@@ -107,5 +116,12 @@ public class ThesisRouteService implements RouteService {
 
         return RouteMapper.createGeneratedRouteResponse(null, routeRequest, routePointsResponse);
 
+    }
+
+    private Date getYesterday() {
+        final Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, -1);
+
+        return calendar.getTime();
     }
 }
