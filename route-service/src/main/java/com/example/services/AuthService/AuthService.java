@@ -1,5 +1,6 @@
 package com.example.services.AuthService;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.model.dto.request.AuthRequest;
 import com.example.model.dto.request.RefreshRequest;
 import com.example.model.dto.response.AuthResponse;
@@ -9,6 +10,8 @@ public interface AuthService {
     AuthResponse loginUser(AuthRequest authRequest, String fingerPrint);
     AuthResponse registerUser(AuthRequest authRequest, String fingerPrint);
     UserResponse getUserByUsername(String username);
-    void logoutUser(String username);
+
+    void logoutUser(String username, String fingerPrint);
+
     AuthResponse refreshToken(RefreshRequest refreshRequest, String fingerPrint);
 }

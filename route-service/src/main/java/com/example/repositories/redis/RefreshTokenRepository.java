@@ -8,5 +8,6 @@ import java.util.List;
 
 @Repository
 public interface RefreshTokenRepository extends CrudRepository<RefreshToken, String> {
+    List<RefreshToken> findByFingerPrint(String fingerPrint);
     List<RefreshToken> findByUsername(String username);
 }

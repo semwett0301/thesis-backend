@@ -11,12 +11,12 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 @AllArgsConstructor
-@EnableRedisRepositories
+@EnableRedisRepositories(basePackages = "com.example.repositories.redis")
 public class RedisConfig {
     private RedisConnectionFactory connectionFactory;
 
     @Bean
-    public RedisTemplate< String, Object> redisTemplate() throws Exception {
+    public RedisTemplate< String, Object> redisTemplate() {
         final RedisTemplate< String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
         template.setKeySerializer(new StringRedisSerializer());

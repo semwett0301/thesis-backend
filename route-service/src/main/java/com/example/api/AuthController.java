@@ -4,11 +4,13 @@ import com.example.model.dto.request.AuthRequest;
 import com.example.model.dto.request.RefreshRequest;
 import com.example.model.dto.response.AuthResponse;
 import com.example.model.dto.response.UserResponse;
-import com.example.security.model.AuthenticationToken;
 import com.example.services.AuthService.AuthService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
@@ -17,8 +19,8 @@ public class AuthController {
     private final AuthService authService;
 
     @GetMapping("/me")
-    public UserResponse getMe(AuthenticationToken auth) {
-        return authService.getUserByUsername(auth.getPrincipal());
+    public UserResponse getMe(@AuthenticationPrincipal Optional<String> username) {
+        return authService.getUserByUsername(username.orElse(""));
     }
 
     @PostMapping("/login")
@@ -27,8 +29,8 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public void postLogout() {
-        authService.logoutUser("");
+    public void postLogout(@AuthenticationPrincipal Optional<String> usernameOptional, @RequestHeader(name = "X-Finger-Print", required = true) String fingerPrint) {
+        usernameOptional.ifPresent(username -> authService.logoutUser(username, fingerPrint));
     }
 
     @PostMapping("/register")

@@ -18,8 +18,8 @@ public class RoutePointMapper {
         routePointResponse.setCoords(coords);
         routePointResponse.setUrl(generatedRoutePoint.getUrl());
         routePointResponse.setDate(generatedRoutePoint.getDate());
-        routePointResponse.setStartTime(generatedRoutePoint.getStartTime());
-        routePointResponse.setEndTime(generatedRoutePoint.getEndTime());
+        routePointResponse.setStart_time(generatedRoutePoint.getStartTime());
+        routePointResponse.setEnd_time(generatedRoutePoint.getEndTime());
 
         return routePointResponse;
     }
@@ -34,8 +34,8 @@ public class RoutePointMapper {
         routePointResponse.setCoords(coords);
         routePointResponse.setUrl(routePoint.getUrl());
         routePointResponse.setDate(routePoint.getDate());
-        routePointResponse.setStartTime(routePoint.getStartTime());
-        routePointResponse.setEndTime(routePoint.getEndTime());
+        routePointResponse.setStart_time(routePoint.getStartTime());
+        routePointResponse.setEnd_time(routePoint.getEndTime());
 
         return routePointResponse;
     }

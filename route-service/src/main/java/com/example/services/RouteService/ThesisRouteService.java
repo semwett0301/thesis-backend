@@ -55,7 +55,8 @@ public class ThesisRouteService implements RouteService {
 
             route.setIsSaved(false);
 
-            routeRepository.save(route);
+            route = routeRepository.save(route);
+            routeResponse.setId(route.getId());
         }
 
         return routeResponse;

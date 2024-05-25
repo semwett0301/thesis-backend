@@ -19,6 +19,6 @@ public class RoutePointResponse {
     private CoordsResponse coords;
     private String url;
     private Date date;
-    private String startTime;
-    private String endTime;
+    private String start_time;
+    private String end_time;
 }

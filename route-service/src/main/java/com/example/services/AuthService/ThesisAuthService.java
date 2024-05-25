@@ -6,7 +6,6 @@ import com.example.model.dto.response.AuthResponse;
 import com.example.model.dto.response.UserResponse;
 import com.example.model.entities.db.UserInfo;
 import com.example.model.entities.redis.AccessToken;
-import com.example.model.entities.redis.BaseToken;
 import com.example.model.entities.redis.RefreshToken;
 import com.example.model.mappers.UserMapper;
 import com.example.repositories.db.UserRepository;
@@ -14,7 +13,7 @@ import com.example.repositories.redis.AccessTokenRepository;
 import com.example.repositories.redis.RefreshTokenRepository;
 import com.example.security.utils.JwtUtils.JwtUtils;
 import lombok.AllArgsConstructor;
-import org.mapstruct.control.MappingControl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -26,6 +25,7 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class ThesisAuthService implements AuthService {
     private final UserRepository userRepository;
     private final AccessTokenRepository accessTokenRepository;
@@ -57,9 +57,9 @@ public class ThesisAuthService implements AuthService {
     }
 
     @Override
-    public void logoutUser(String username) {
+    public void logoutUser(String username, String fingerPrint) {
         disableAccessTokensByUsername(username);
-        disableRefreshTokensByUsername(username);
+        disableRefreshTokensByFingerPrint(fingerPrint);
     }
 
     @Override
@@ -67,14 +67,14 @@ public class ThesisAuthService implements AuthService {
         var refreshToken = refreshTokenRepository.findById(refreshRequest.getRefresh())
                 .orElseThrow(unauthorizedExceptionHandler);
 
-        var isValid = refreshToken.getIsActive() && fingerPrint.equals(refreshToken.getFingerPrint());
-
         disableAccessTokensByUsername(refreshToken.getUsername());
-        disableRefreshTokensByUsername(refreshToken.getUsername());
+        disableRefreshTokensByFingerPrint(fingerPrint);
 
-        if (isValid) {
+        if (refreshToken.getIsActive()) {
             refreshTokenRepository.save(refreshToken);
             return createTokens(refreshToken.getUsername(), fingerPrint);
+        } else if (!fingerPrint.equals(refreshToken.getFingerPrint())) {
+            disableRefreshTokensByUsername(refreshToken.getUsername());
         }
 
         throw unauthorizedExceptionHandler.get();
@@ -89,7 +89,7 @@ public class ThesisAuthService implements AuthService {
 
     private RefreshToken createRefreshToken(String username, String fingerPrint) {
         var tokenHash = jwtUtils.createJWTRefreshToken(username);
-        var token = new RefreshToken(tokenHash, username, fingerPrint, true);
+        var token = new RefreshToken(tokenHash, username, true, fingerPrint);
         refreshTokenRepository.save(token);
 
         return token;
@@ -105,9 +105,8 @@ public class ThesisAuthService implements AuthService {
 
     private UserInfo checkUser(AuthRequest authRequest) {
         var user = userRepository.findByUsername(authRequest.getUsername()).orElseThrow(unauthorizedExceptionHandler);
-        var encryptedPassword = passwordEncoder.encode(authRequest.getPassword());
 
-        if (user.getPassword().equals(encryptedPassword)) {
+        if (passwordEncoder.matches(authRequest.getPassword(), user.getPassword())) {
             return user;
         }
 
@@ -125,17 +124,19 @@ public class ThesisAuthService implements AuthService {
 
     private void disableAccessTokensByUsername(String username) {
         var accessTokens = accessTokenRepository.findByUsername(username);
-        accessTokens.forEach(this::disableToken);
+        accessTokens.forEach(token -> token.setIsActive(false));
         accessTokenRepository.saveAll(accessTokens);
     }
 
     private void disableRefreshTokensByUsername(String username) {
         var refreshTokens = refreshTokenRepository.findByUsername(username);
-        refreshTokens.forEach(this::disableToken);
+        refreshTokens.forEach(token -> token.setIsActive(false));
         refreshTokenRepository.saveAll(refreshTokens);
     }
 
-    private void disableToken(BaseToken token) {
-        token.setIsActive(false);
+    private void disableRefreshTokensByFingerPrint(String fingerPrint) {
+        var refreshTokens = refreshTokenRepository.findByFingerPrint(fingerPrint);
+        refreshTokens.forEach(token -> token.setIsActive(false));
+        refreshTokenRepository.saveAll(refreshTokens);
     }
 }

@@ -1,13 +1,22 @@
 package com.example.model.entities.redis;
 
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
 
-@EqualsAndHashCode(callSuper = true)
 @RedisHash("AccessToken")
-public class AccessToken extends BaseToken {
-    public AccessToken(String token, String username, Boolean isActive) {
-        super(token, username, isActive);
-    }
+@Getter
+@Setter
+@AllArgsConstructor
+public class AccessToken implements BaseToken {
+    @Id
+    private final String token;
+
+    @Indexed
+    private String username;
+
+    private Boolean isActive;
 }

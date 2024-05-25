@@ -17,7 +17,7 @@ services:
       - 5432:5432
     environment:
       POSTGRES_USER: admin
-      POSTGRES_DB: admin
+      POSTGRES_DB: thesisdb
       POSTGRES_PASSWORD: password
       POSTGRES_HOST_AUTH_METHOD: "scram-sha-256\nhost replication all 0.0.0.0/0 md5"
       POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"

@@ -40,6 +40,7 @@ public class Route extends BaseEntity {
     private Boolean isSaved;
 
     @OneToMany
+    @JoinColumn(name = "route_id")
     private List<RoutePoint> routePoints;
 
     @ManyToOne

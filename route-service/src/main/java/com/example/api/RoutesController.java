@@ -8,8 +8,10 @@ import com.example.security.model.AuthenticationToken;
 import com.example.services.RouteService.RouteService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -19,11 +21,9 @@ public class RoutesController {
     private final RouteService routeService;
 
     @PostMapping
-    public RouteResponse createRoute(AuthenticationToken auth, @Valid @RequestBody RouteRequest routeRequest) throws GptNotWorkingException {
-        var username = auth.getPrincipal();
-
-        return username.equals("") ? routeService.createRoute(routeRequest)
-                : routeService.createRoute(routeRequest, username);
+    public RouteResponse createRoute(@AuthenticationPrincipal Optional<String> username, @Valid @RequestBody RouteRequest routeRequest) throws GptNotWorkingException {
+        return username.isEmpty() ? routeService.createRoute(routeRequest)
+                : routeService.createRoute(routeRequest, username.get());
     }
 
     @PostMapping("/saved")

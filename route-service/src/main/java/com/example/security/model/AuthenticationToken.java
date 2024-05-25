@@ -1,41 +1,39 @@
 package com.example.security.model;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.DigestUtils;
 
+import javax.swing.text.html.Option;
 import java.util.Collection;
+import java.util.Optional;
 
 @ToString(callSuper = true)
 @Setter
 public class AuthenticationToken extends AbstractAuthenticationToken {
 
     @Setter
-    private String username;
+    private Optional<String> username;
 
-    public AuthenticationToken(String principal, Collection<? extends GrantedAuthority> authorities) {
+    @Setter
+    private Optional<DecodedJWT> token;
+
+    public AuthenticationToken(Optional<String> principal, Optional<DecodedJWT> token, Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         this.username = principal;
-    }
-
-    public void authenticate() {
-        setAuthenticated(getDetails() != null && getDetails() instanceof SessionUser && !((SessionUser) getDetails()).hasExpired());
+        this.token = token;
     }
 
     @Override
-    public String getCredentials() {
-        return "";
+    public Optional<DecodedJWT> getCredentials() {
+        return this.token;
     }
 
     @Override
-    public String getPrincipal() {
-        return username != null ? username : "";
+    public Optional<String> getPrincipal() {
+        return username;
     }
-
-    public String getHash() {
-        return DigestUtils.md5DigestAsHex(String.format("%s_%d", username, ((SessionUser) getDetails()).getCreated().getTime()).getBytes());
-    }
-
 }
