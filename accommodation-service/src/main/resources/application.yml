@@ -1,6 +1,12 @@
 server:
   port: 0
 
+yandex:
+  source: "Яндекс.Путешествия"
+  uri: "https://yasen.hotellook.com/tp/public"
+  suggest-uri: "https://engine.hotellook.com/api/v2"
+  token: 129691c2d364db5f8aea5b915173cad6
+
 spring:
   application:
     name: ACCOMMODATION-SERVICE

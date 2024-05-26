@@ -1,4 +1,4 @@
-package com.example.model.response;
+package com.example.model.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,10 +7,9 @@ import lombok.Getter;
 @Getter
 public class AccommodationResponse {
     private Integer price;
-    private Integer center_distance;
+    private Double center_distance;
     private String name;
-    private String link;
     private String source;
-    private Integer rating;
+    private Double rating;
     private Integer reviews_amount;
 }

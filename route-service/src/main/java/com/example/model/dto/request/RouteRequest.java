@@ -1,4 +1,4 @@
-package com.example.model.request;
+package com.example.model.dto.request;
 
 import com.example.CityDto;
 import jakarta.validation.constraints.Min;

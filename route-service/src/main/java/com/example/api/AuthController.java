@@ -1,9 +1,9 @@
 package com.example.api;
 
-import com.example.model.request.AuthRequest;
-import com.example.model.request.RefreshRequest;
-import com.example.model.response.AuthResponse;
-import com.example.model.response.UserResponse;
+import com.example.model.dto.request.AuthRequest;
+import com.example.model.dto.request.RefreshRequest;
+import com.example.model.dto.response.AuthResponse;
+import com.example.model.dto.response.UserResponse;
 import com.example.services.AuthService.AuthService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

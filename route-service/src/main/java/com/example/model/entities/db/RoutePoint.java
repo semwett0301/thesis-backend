@@ -14,6 +14,7 @@ public class RoutePoint extends BaseEntity {
     private String name;
 
     @NotNull
+    @Column(name = "description", length = 2048)
     private String description;
 
     @NotNull

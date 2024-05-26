@@ -1,8 +1,8 @@
 package com.example.api;
 
-import com.example.model.request.RouteRequest;
-import com.example.model.response.RouteResponse;
-import com.example.model.response.SavedRoutesResponse;
+import com.example.model.dto.request.RouteRequest;
+import com.example.model.dto.response.RouteResponse;
+import com.example.model.dto.response.SavedRoutesResponse;
 import com.example.model.exceptions.GptNotWorkingException;
 import com.example.services.RouteService.RouteService;
 import jakarta.validation.Valid;

@@ -1,4 +1,4 @@
-package com.example.model.external.gpt;
+package com.example.model.dto.gpt;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;

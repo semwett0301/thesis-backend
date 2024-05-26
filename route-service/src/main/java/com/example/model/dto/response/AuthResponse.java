@@ -1,4 +1,4 @@
-package com.example.model.response;
+package com.example.model.dto.response;
 
 import com.auth0.jwt.JWT;
 import lombok.AllArgsConstructor;

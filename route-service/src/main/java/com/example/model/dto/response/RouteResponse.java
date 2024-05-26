@@ -1,4 +1,4 @@
-package com.example.model.response;
+package com.example.model.dto.response;
 
 import com.example.CityDto;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package com.example.model.internal;
+package com.example.model.dto.internal;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

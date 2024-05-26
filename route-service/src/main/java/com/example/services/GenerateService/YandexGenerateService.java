@@ -1,11 +1,11 @@
 package com.example.services.GenerateService;
 
-import com.example.model.external.gpt.GptMessage;
-import com.example.model.external.gpt.GptRequest;
-import com.example.model.external.gpt.GptResponse;
-import com.example.model.external.gpt.GptRole;
-import com.example.model.internal.GeneratedRoutePoint;
-import com.example.model.request.RouteRequest;
+import com.example.model.dto.gpt.GptMessage;
+import com.example.model.dto.gpt.GptRequest;
+import com.example.model.dto.gpt.GptResponse;
+import com.example.model.dto.gpt.GptRole;
+import com.example.model.dto.internal.GeneratedRoutePoint;
+import com.example.model.dto.request.RouteRequest;
 import com.example.model.exceptions.GptNotWorkingException;
 import com.example.utils.GptApi.GptApi;
 import com.google.gson.Gson;

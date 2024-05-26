@@ -1,8 +1,8 @@
 package com.example.model.mappers;
 
-import com.example.model.request.RouteRequest;
-import com.example.model.response.RoutePointResponse;
-import com.example.model.response.RouteResponse;
+import com.example.model.dto.request.RouteRequest;
+import com.example.model.dto.response.RoutePointResponse;
+import com.example.model.dto.response.RouteResponse;
 import com.example.model.entities.db.Route;
 
 import java.util.List;
