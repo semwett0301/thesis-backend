@@ -65,10 +65,9 @@ public class AviasalesTicketsService implements TicketsService {
             final List<TicketResponse> resultList = new ArrayList<>();
 
             if (finalTicket != null) {
-                double firstPrice = finalTicket.getPrice() * Math.random();
-                int firstResultPrice = (int) firstPrice;
+                var finalTicketPrice = finalTicket.getPrice() * 0.45;
 
-                final var toTicket = toTicketResponse(firstResultPrice,
+                final var toTicket = toTicketResponse((int) finalTicketPrice,
                         ticketsInternalRequest.getStartCity(),
                         ticketsInternalRequest.getEndCity(),
                         finalTicket.getOrigin_airport(),
@@ -77,7 +76,7 @@ public class AviasalesTicketsService implements TicketsService {
                         new Date(finalTicket.getDeparture_at().getTime() + finalTicket.getDuration() * 60 * 1000),
                         finalTicket);
 
-                final var returnTicket = toTicketResponse(finalTicket.getPrice() - firstResultPrice,
+                final var returnTicket = toTicketResponse(finalTicket.getPrice() - (int) finalTicketPrice,
                         ticketsInternalRequest.getEndCity(),
                         ticketsInternalRequest.getStartCity(),
                         finalTicket.getDestination_airport(),

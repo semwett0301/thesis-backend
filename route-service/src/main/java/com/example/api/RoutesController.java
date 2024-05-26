@@ -10,9 +10,12 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 import java.util.UUID;
+
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 @RestController
 @RequestMapping("/routes")
@@ -27,8 +30,9 @@ public class RoutesController {
     }
 
     @PostMapping("/saved")
-    public SavedRoutesResponse getSavedRoutes() {
-        return routeService.getRoutes();
+    public SavedRoutesResponse getSavedRoutes(@AuthenticationPrincipal Optional<String> username) {
+        var usernameExist = username.orElseThrow(() -> new ResponseStatusException(FORBIDDEN, "Forbidden"));
+        return routeService.getRoutes(usernameExist);
     }
 
     @PostMapping("/{id}/save")

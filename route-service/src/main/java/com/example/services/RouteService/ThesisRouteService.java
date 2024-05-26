@@ -12,7 +12,6 @@ import com.example.repositories.db.RoutePointRepository;
 import com.example.repositories.db.RouteRepository;
 import com.example.repositories.db.UserRepository;
 import com.example.services.GenerateService.GenerateService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,6 +22,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
@@ -75,8 +75,9 @@ public class ThesisRouteService implements RouteService {
     }
 
     @Override
-    public SavedRoutesResponse getRoutes() {
-        var routes = routeRepository.findByStartDateAfter(getYesterday());
+    public SavedRoutesResponse getRoutes(String username) {
+        var user = userRepository.findByUsername(username);
+        var routes = routeRepository.findByStartDateAfterAndUser(getYesterday(), user.orElseThrow(() -> new ResponseStatusException(FORBIDDEN, "Forbidden")));
 
         var routesRecently = routes.stream()
                 .filter(route -> !route.getIsSaved())

@@ -10,6 +10,6 @@ import java.util.UUID;
 public interface RouteService {
     RouteResponse createRoute(RouteRequest routeRequest) throws GptNotWorkingException;
     RouteResponse createRoute(RouteRequest routeRequest, String username) throws GptNotWorkingException;
-    SavedRoutesResponse getRoutes();
+    SavedRoutesResponse getRoutes(String username);
     RouteResponse saveRoute(UUID id);
 }

@@ -72,8 +72,10 @@ public class YandexGenerateService implements GenerateService {
         var text = message.getMessage().getText();
         var json = text.substring(text.lastIndexOf('['), text.lastIndexOf(']') + 1)
                 .replaceAll("'", "\"")
-                .replaceAll("»", "\"")
+                .replaceAll("»,", "\"")
+                .replaceAll("»", "")
                 .replaceAll("«", "")
+                .replaceAll("\"+", "\"")
                 .replaceAll("\n*", "")
                 .replaceAll("\t+", "")
                 .replaceAll("\s+\\{\s+", "{")

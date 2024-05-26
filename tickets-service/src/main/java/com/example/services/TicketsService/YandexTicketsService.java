@@ -5,6 +5,7 @@ import com.example.model.dto.internal.TicketsInternalRequest;
 import com.example.model.dto.internal.YandexInternalRequest;
 import com.example.model.dto.response.TicketResponse;
 import com.example.utils.YandexApi.YandexApi;
+import io.netty.util.internal.ThreadLocalRandom;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -43,11 +44,8 @@ public class YandexTicketsService implements TicketsService {
             var firstSegment = ticketTo.getSegments().get(0);
             var secondSegment = ticketFrom.getSegments().get(0);
 
-            var divider = Math.random();
-
-            var firstPrice = divider * ticketsInternalRequest.getMaxPrice();
-            var diff = ticketsInternalRequest.getMaxPrice() - firstPrice;
-            var secondPrice = diff > 3000 ? diff - 1150 : diff;
+            var firstPrice = 0.38 * ticketsInternalRequest.getMaxPrice();
+            var secondPrice = 0.44 * ticketsInternalRequest.getMaxPrice();
 
             result.add(getTicketResponseFromSegment(ticketsInternalRequest.getStartCity(), ticketsInternalRequest.getEndCity(), firstSegment, (int) firstPrice));
             result.add(getTicketResponseFromSegment(ticketsInternalRequest.getEndCity(), ticketsInternalRequest.getStartCity(), secondSegment, (int) secondPrice));
