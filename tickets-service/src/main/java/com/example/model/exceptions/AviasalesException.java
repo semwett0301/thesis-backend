@@ -1,4 +1,4 @@
-package com.example.model.dto.exceptions;
+package com.example.model.exceptions;
 
 public class AviasalesException extends Exception {
     @Override

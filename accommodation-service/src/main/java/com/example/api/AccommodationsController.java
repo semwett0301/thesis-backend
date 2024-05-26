@@ -1,7 +1,7 @@
 package com.example.api;
 
 import com.example.CityDto;
-import com.example.model.dto.response.AccommodationResponse;
+import com.example.model.response.AccommodationResponse;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;

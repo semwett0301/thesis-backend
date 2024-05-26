@@ -2,11 +2,18 @@ server:
   port: 0
 
 aviasales:
-  uri: https://api.travelpayouts.com/aviasales/v3/
+  uri: https://api.travelpayouts.com/aviasales/v3
   token: 129691c2d364db5f8aea5b915173cad6
   logos-uri: https://pics.avs.io/200/200/
   source-name: Aviasales
   source: https://aviasales.ru
+
+yandex:
+  uri: https://api.rasp.yandex.net/v3.0
+  token: 68accdce-21bf-4120-94c1-0600c3ebdc60
+  source: "Яндекс.Расписание"
+  link: https://rasp.yandex.ru/
+  logo-url: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREiJ55wkqT8qnUomej7T9VKcijCGJnu-N01znEcwxBsQ&s
 
 spring:
   application:

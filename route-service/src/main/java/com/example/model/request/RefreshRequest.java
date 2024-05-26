@@ -1,4 +1,4 @@
-package com.example.model.dto.request;
+package com.example.model.request;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

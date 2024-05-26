@@ -25,7 +25,6 @@ public enum TicketEnum {
                 return dep;
             }
         }
-
         return null;
     }
 

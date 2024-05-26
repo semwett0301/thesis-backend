@@ -1,4 +1,4 @@
-package com.example.model.dto.external.gpt;
+package com.example.model.external.gpt;
 
 import lombok.Data;
 

@@ -1,7 +1,6 @@
-package com.example.model.dto.external.gpt;
+package com.example.model.external.gpt;
 
 import lombok.Data;
-import org.apache.commons.lang.enums.Enum;
 
 import java.util.List;
 import java.util.Optional;

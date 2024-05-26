@@ -12,13 +12,13 @@ import java.text.SimpleDateFormat;
 public class AviasalesApi {
     private final WebClient webClient;
 
-    private final String uri;
-
     private final String token;
 
-    public AviasalesApi(WebClient webClient, @Value("${aviasales.uri}") String uri, @Value("${aviasales.token}") String token) {
-        this.webClient = webClient;
-        this.uri = uri;
+
+    public AviasalesApi(@Value("${aviasales.uri}") String uri, @Value("${aviasales.token}") String token) {
+        this.webClient = WebClient.builder()
+                .baseUrl(uri)
+                .build();
         this.token = token;
     }
 
@@ -27,8 +27,7 @@ public class AviasalesApi {
 
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .host(uri)
-                        .path("prices_for_dates")
+                        .path("/prices_for_dates")
                         .queryParam("origin", aviasalesInternalRequest.getOrigin())
                         .queryParam("destination", aviasalesInternalRequest.getDestination())
                         .queryParam("departure_at ", df.format(aviasalesInternalRequest.getDepartureAt()))

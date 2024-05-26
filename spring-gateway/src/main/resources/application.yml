@@ -39,14 +39,14 @@ spring:
           uri: lb://ACCOMMODATION-SERVICE
           order: 2
           predicates:
-            - Path=/api/v1/accommodations/**
+            - Path=/api/v1/accommodation-service/**
           filters:
             - StripPrefix=3
         - id: ticket-service
           uri: lb://TICKET-SERVICE
           order: 1
           predicates:
-            - Path=/api/v1/tickets/**
+            - Path=/api/v1/ticket-service/**
           filters:
             - StripPrefix=3
 

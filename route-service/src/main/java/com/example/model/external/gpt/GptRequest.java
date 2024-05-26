@@ -1,4 +1,4 @@
-package com.example.model.dto.external.gpt;
+package com.example.model.external.gpt;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

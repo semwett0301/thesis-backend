@@ -14,18 +14,18 @@ public class AviasalesTicketsResponse {
     public static class ResponseData {
         private String origin;
         private String destination;
-        private String originAirport;
-        private String destinationAirport;
+        private String origin_airport;
+        private String destination_airport;
         private Integer price;
         private String airline;
-        private String flightNumber;
-        private Date departureAt;
-        private Date returnAt;
+        private String flight_number;
+        private Date departure_at;
+        private Date return_at;
         private Integer transfers;
-        private Integer returnTransfers;
+        private Integer return_transfers;
         private Integer duration;
-        private Integer durationTo;
-        private Integer durationBack;
+        private Integer duration_to;
+        private Integer duration_back;
         private String link;
     }
 }

@@ -1,16 +1,15 @@
 package com.example.services.GenerateService;
 
-import com.example.model.dto.external.gpt.GptMessage;
-import com.example.model.dto.external.gpt.GptRequest;
-import com.example.model.dto.external.gpt.GptResponse;
-import com.example.model.dto.external.gpt.GptRole;
-import com.example.model.dto.internal.GeneratedRoutePoint;
-import com.example.model.dto.request.RouteRequest;
+import com.example.model.external.gpt.GptMessage;
+import com.example.model.external.gpt.GptRequest;
+import com.example.model.external.gpt.GptResponse;
+import com.example.model.external.gpt.GptRole;
+import com.example.model.internal.GeneratedRoutePoint;
+import com.example.model.request.RouteRequest;
 import com.example.model.exceptions.GptNotWorkingException;
 import com.example.utils.GptApi.GptApi;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
@@ -18,7 +17,6 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -98,14 +96,14 @@ public class YandexGenerateService implements GenerateService {
         final var day = date.getDayOfMonth();
         final var month = date.getMonthValue();
 
-        return MessageFormat.format("Сгенерируй ещё 5 точек маршрута на {0}.{1} с учетом тех же пожеланий и в том же формате", day, month);
+        return MessageFormat.format("Сгенерируй ещё 4 точки маршрута на {0}.{1} с учетом тех же пожеланий и в том же формате", day, month);
     }
 
     private String getStartUserMessage(LocalDate date, String city, Optional<String> additionalInformation) {
         final var day = date.getDayOfMonth();
         final var month = date.getMonthValue();
 
-        final var mainText = MessageFormat.format("Составь маршрут по городу {0} на {1}.{2}. Приведи минимум 5 точек для посещения.", city, day, month);
+        final var mainText = MessageFormat.format("Составь маршрут по городу {0} на {1}.{2}. Приведи минимум 4 точки для посещения.", city, day, month);
 
         var additionalText = "";
         if (additionalInformation.isPresent()) {

@@ -1,8 +1,8 @@
 package com.example.utils.GptApi;
 
-import com.example.model.dto.external.gpt.GptBadRequestError;
-import com.example.model.dto.external.gpt.GptRequest;
-import com.example.model.dto.external.gpt.GptResponse;
+import com.example.model.external.gpt.GptBadRequestError;
+import com.example.model.external.gpt.GptRequest;
+import com.example.model.external.gpt.GptResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;

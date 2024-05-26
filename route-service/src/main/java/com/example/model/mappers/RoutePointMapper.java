@@ -1,8 +1,8 @@
 package com.example.model.mappers;
 
-import com.example.model.dto.internal.GeneratedRoutePoint;
-import com.example.model.dto.response.CoordsResponse;
-import com.example.model.dto.response.RoutePointResponse;
+import com.example.model.internal.GeneratedRoutePoint;
+import com.example.model.response.CoordsResponse;
+import com.example.model.response.RoutePointResponse;
 import com.example.model.entities.db.Route;
 import com.example.model.entities.db.RoutePoint;
 

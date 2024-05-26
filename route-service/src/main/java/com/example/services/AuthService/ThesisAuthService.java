@@ -1,9 +1,9 @@
 package com.example.services.AuthService;
 
-import com.example.model.dto.request.AuthRequest;
-import com.example.model.dto.request.RefreshRequest;
-import com.example.model.dto.response.AuthResponse;
-import com.example.model.dto.response.UserResponse;
+import com.example.model.request.AuthRequest;
+import com.example.model.request.RefreshRequest;
+import com.example.model.response.AuthResponse;
+import com.example.model.response.UserResponse;
 import com.example.model.entities.db.UserInfo;
 import com.example.model.entities.redis.AccessToken;
 import com.example.model.entities.redis.RefreshToken;
@@ -14,8 +14,6 @@ import com.example.repositories.redis.RefreshTokenRepository;
 import com.example.security.utils.JwtUtils.JwtUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
