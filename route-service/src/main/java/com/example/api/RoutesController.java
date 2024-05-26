@@ -5,6 +5,7 @@ import com.example.model.dto.response.RouteResponse;
 import com.example.model.dto.response.SavedRoutesResponse;
 import com.example.model.exceptions.GptNotWorkingException;
 import com.example.services.RouteService.RouteService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,7 +21,7 @@ public class RoutesController {
     private final RouteService routeService;
 
     @PostMapping
-    public RouteResponse createRoute(@AuthenticationPrincipal Optional<String> username, @Valid @RequestBody RouteRequest routeRequest) throws GptNotWorkingException {
+    public RouteResponse createRoute(@AuthenticationPrincipal Optional<String> username, @Valid @RequestBody RouteRequest routeRequest) throws GptNotWorkingException, JsonProcessingException {
         return username.isEmpty() ? routeService.createRoute(routeRequest)
                 : routeService.createRoute(routeRequest, username.get());
     }

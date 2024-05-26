@@ -12,6 +12,7 @@ import com.example.repositories.db.RoutePointRepository;
 import com.example.repositories.db.RouteRepository;
 import com.example.repositories.db.UserRepository;
 import com.example.services.GenerateService.GenerateService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;

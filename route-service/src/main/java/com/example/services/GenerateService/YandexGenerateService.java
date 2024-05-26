@@ -70,7 +70,16 @@ public class YandexGenerateService implements GenerateService {
 
     private List<GeneratedRoutePoint> getRoutePointsFromMessage(GptResponse.MessageWrapper message) {
         var text = message.getMessage().getText();
-        var json = text.substring(text.lastIndexOf('['), text.lastIndexOf(']') + 1);
+        var json = text.substring(text.lastIndexOf('['), text.lastIndexOf(']') + 1)
+                .replaceAll("'", "\"")
+                .replaceAll("»", "\"")
+                .replaceAll("«", "")
+                .replaceAll("\n*", "")
+                .replaceAll("\t+", "")
+                .replaceAll("\s+\\{\s+", "{")
+                .replaceAll("\s+}\s+", "}")
+                .replaceAll("\s+\"", "\"")
+                .replaceAll("\"\s+", "\"");
         return List.of(gson.fromJson(json, GeneratedRoutePoint[].class));
     }
 
@@ -111,7 +120,7 @@ public class YandexGenerateService implements GenerateService {
             additionalText = MessageFormat.format("Учти следующие пожелания: {0}", info);
         }
 
-        final var ending = " В ответе пришли массив из точек маршрута в формате JSON. Структура точки маршрута является следующей: { 'name': 'название точки маршрута', 'description': 'максимально подробное описание точки маршрута', 'latitude': 'Координата долготы для точки маршрута', 'longitude': 'Координата широты для точки маршрута', 'url': 'Ссылка на ресурс с описанием точки маршрута', 'date': 'Дата посещения точки в формате UTC', 'startTime': 'Время начала посещения точки в формате HH:mm','endTime': 'Время окончания посещения точки в формате HH:mm'}";
+        final var ending = " В ответе пришли массив из точек маршрута в формате JSON. Структура точки маршрута является следующей: { 'name': 'название точки маршрута', 'description': 'максимально подробное описание точки маршрута', 'latitude': 'Координата долготы для точки маршрута', 'longitude': 'Координата широты для точки маршрута', 'url': 'Ссылка на ресурс с описанием точки маршрута', 'date': 'Дата посещения точки в формате UTC', 'startTime': 'Время начала посещения точки в формате HH:mm','endTime': 'Время окончания посещения точки в формате HH:mm'}. Не используй символы « и ».";
 
         return mainText + additionalText + ending;
     }
