@@ -1,5 +1,6 @@
 package com.example.model.entities.db;
 
+import com.example.model.utils.RouteStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -36,15 +37,15 @@ public class Route extends BaseEntity {
     private String additionalInformation;
 
     @NotNull
-    @Column(name = "is_saved", columnDefinition = "boolean default false")
-    private Boolean isSaved;
+    @Column(name = "status")
+    private RouteStatus status;
 
     @OneToMany
     @JoinColumn(name = "route_id")
     private List<RoutePoint> routePoints;
 
     @ManyToOne
-    @JoinColumn(name = "username", nullable = false)
+    @JoinColumn(name = "username")
     private UserInfo user;
 
     @ManyToOne

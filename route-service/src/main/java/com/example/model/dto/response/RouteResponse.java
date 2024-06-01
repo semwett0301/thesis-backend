@@ -1,6 +1,7 @@
 package com.example.model.dto.response;
 
 import com.example.CityDto;
+import com.example.model.utils.RouteStatus;
 import lombok.Data;
 
 import java.util.Date;
@@ -17,6 +18,6 @@ public class RouteResponse {
     private double transport_price;
     private double accommodation_price;
     private String additional_information;
-    private Boolean is_saved;
+    private RouteStatus status;
     private List<RoutePointResponse> route_points;
 }

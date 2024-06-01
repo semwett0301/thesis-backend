@@ -7,6 +7,7 @@ import com.example.model.entities.db.Route;
 import com.example.model.exceptions.GptNotWorkingException;
 import com.example.model.mappers.RouteMapper;
 import com.example.model.mappers.RoutePointMapper;
+import com.example.model.utils.RouteStatus;
 import com.example.repositories.db.CityRepository;
 import com.example.repositories.db.RoutePointRepository;
 import com.example.repositories.db.RouteRepository;
@@ -60,7 +61,7 @@ public class ThesisRouteService implements RouteService {
             route.setStartCity(startCity.get());
             route.setEndCity(endCity.get());
 
-            route.setIsSaved(false);
+            route.setStatus(RouteStatus.GENERATED);
 
             final var routeResult = routeRepository.save(route);
             routeResponse.setId(routeResult.getId());
@@ -80,12 +81,12 @@ public class ThesisRouteService implements RouteService {
         var routes = routeRepository.findByStartDateAfterAndUser(getYesterday(), user.orElseThrow(() -> new ResponseStatusException(FORBIDDEN, "Forbidden")));
 
         var routesRecently = routes.stream()
-                .filter(route -> !route.getIsSaved())
+                .filter(route -> route.getStatus().equals(RouteStatus.GENERATED))
                 .map(RouteMapper::createRouteResponse)
                 .toList();
 
         var routesSaved = routes.stream()
-                .filter(Route::getIsSaved)
+                .filter(route -> route.getStatus().equals(RouteStatus.SAVED))
                 .map(RouteMapper::createRouteResponse)
                 .toList();
 
@@ -96,7 +97,7 @@ public class ThesisRouteService implements RouteService {
     public RouteResponse saveRoute(UUID id) {
         var route = routeRepository.findById(id).orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Route wasn't found"));
 
-        route.setIsSaved(true);
+        route.setStatus(RouteStatus.SAVED);
         routeRepository.save(route);
 
         return RouteMapper.createRouteResponse(route);
@@ -104,7 +105,8 @@ public class ThesisRouteService implements RouteService {
 
     @Scheduled(cron = "${routes.clear-cron}", zone = "${routes.timezone}")
     public void clearRoutes() {
-        var routesNotSaved = routeRepository.findByIsSavedOrStartDateBefore(false, new Date());
+        RouteStatus[] statuses = {RouteStatus.GENERATED, RouteStatus.FAILED};
+        var routesNotSaved = routeRepository.findByStatusInOrStartDateBefore(statuses, new Date());
         routeRepository.deleteAll(routesNotSaved);
         System.out.println("COMPLETE");
     }

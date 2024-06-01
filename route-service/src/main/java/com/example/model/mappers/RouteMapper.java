@@ -4,6 +4,7 @@ import com.example.model.dto.request.RouteRequest;
 import com.example.model.dto.response.RoutePointResponse;
 import com.example.model.dto.response.RouteResponse;
 import com.example.model.entities.db.Route;
+import com.example.model.utils.RouteStatus;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,7 +21,7 @@ public class RouteMapper {
         routePointResponse.setStart_date(routeRequest.getStart_date());
         routePointResponse.setEnd_date(routeRequest.getEnd_date());
         routePointResponse.setAdditional_information(routeRequest.getAdditional_information());
-        routePointResponse.setIs_saved(false);
+        routePointResponse.setStatus(RouteStatus.GENERATED);
 
         routePointResponse.setStart_city(routeRequest.getStart_city());
         routePointResponse.setEnd_city(routeRequest.getEnd_city());
@@ -51,7 +52,7 @@ public class RouteMapper {
 
         routeResponse.setRoute_points(routePoints);
 
-        routeResponse.setIs_saved(route.getIsSaved());
+        routeResponse.setStatus(route.getStatus());
         routeResponse.setAdditional_information(route.getAdditionalInformation());
 
         return routeResponse;
@@ -66,7 +67,7 @@ public class RouteMapper {
         routeEntity.setAccommodationPrice(routeRequest.getAccommodation_price());
         routeEntity.setTransportPrice(routeRequest.getTransport_price());
 
-        routeEntity.setIsSaved(false);
+        routeEntity.setStatus(RouteStatus.GENERATED);
 
         routeEntity.setAdditionalInformation(routeRequest.getAdditional_information());
 
