@@ -7,5 +7,5 @@ import com.example.model.exceptions.RouteNotExistException;
 import java.io.Serializable;
 
 public interface QueueService {
-    void executeGenerateTask(String routeResponse) throws RouteNotExistException, GptNotWorkingException;
+    void executeGenerateTask(String routeResponse) throws RouteNotExistException, GptNotWorkingException, InterruptedException;
 }

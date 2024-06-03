@@ -32,7 +32,7 @@ public class ThesisQueueService implements QueueService {
 
     @Override
     // TODO при получении доступа на несколько подключений к Yandex GPT убрать synchronized + провести анализ на эффективность использования потоков
-    public synchronized void executeGenerateTask(String routeId) throws RouteNotExistException, GptNotWorkingException {
+    public synchronized void executeGenerateTask(String routeId) throws RouteNotExistException, InterruptedException {
         startGeneratingProcess(UUID.fromString(routeId.substring(1, routeId.length() - 1)));
     }
 
@@ -58,7 +58,7 @@ public class ThesisQueueService implements QueueService {
         return routeRepository.findById(routeId).orElseThrow(RouteNotExistException::new);
     }
 
-    private void startGeneratingProcess(UUID routeId) throws RouteNotExistException, GptNotWorkingException {
+    private void startGeneratingProcess(UUID routeId) throws RouteNotExistException, InterruptedException {
         var route = getRoute(routeId);
 
         if (route.getStatus().equals(RouteStatus.CREATED)) {

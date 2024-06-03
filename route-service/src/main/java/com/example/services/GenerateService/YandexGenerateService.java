@@ -5,8 +5,6 @@ import com.example.model.dto.gpt.GptRequest;
 import com.example.model.dto.gpt.GptResponse;
 import com.example.model.dto.gpt.GptRole;
 import com.example.model.dto.internal.GeneratedRoutePoint;
-import com.example.model.dto.request.RouteRequest;
-import com.example.model.dto.response.RouteResponse;
 import com.example.model.entities.db.Route;
 import com.example.model.exceptions.GptNotWorkingException;
 import com.example.model.exceptions.IncorrectGptAnswerException;
@@ -20,6 +18,8 @@ import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +34,7 @@ public class YandexGenerateService implements GenerateService {
     private final GptRequest.CompletionOptions completionOptions;
 
     private final DateFormat localDf = new SimpleDateFormat("yyyy-MM-dd");
+    private final DateTimeFormatter dayDf = DateTimeFormatter.ofPattern("dd.MM");
 
     public YandexGenerateService(GptApi gptApi, Gson gson,
                                  @Value("${yandex-gpt.model-uri}") String modelUri,
@@ -90,7 +91,7 @@ public class YandexGenerateService implements GenerateService {
 
         return initialText.substring(leftBorder, rightBorder)
                 .replaceAll("'", "\"")
-                .replaceAll("»,", "\"")
+                .replaceAll("»,", "\",")
                 .replaceAll("»", "")
                 .replaceAll("«", "")
                 .replaceAll("\"+", "\"")
@@ -99,7 +100,8 @@ public class YandexGenerateService implements GenerateService {
                 .replaceAll("\s+\\{\s+", "{")
                 .replaceAll("\s+}\s+", "}")
                 .replaceAll("\s+\"", "\"")
-                .replaceAll("\"\s+", "\"");
+                .replaceAll("\"\s+", "\"")
+                .replaceAll("[^:\"]","");
     }
 
     private List<GptMessage> getStartMessages(Route route) {
@@ -121,25 +123,23 @@ public class YandexGenerateService implements GenerateService {
     }
 
     private String getContinueUserMessage(LocalDate date) {
-        final var day = date.getDayOfMonth();
-        final var month = date.getMonthValue();
+        final var day = date.format(dayDf);
 
-        return MessageFormat.format("Сгенерируй ещё 4 точки маршрута на {0}.{1} с учетом тех же пожеланий и в том же формате", day, month);
+        return MessageFormat.format("Сгенерируй ещё 4 точки маршрута на {0} с учетом тех же пожеланий и в том же формате", day);
     }
 
     private String getStartUserMessage(LocalDate date, String city, Optional<String> additionalInformation) {
-        final var day = date.getDayOfMonth();
-        final var month = date.getMonthValue();
+        final var day = date.format(dayDf);
 
-        final var mainText = MessageFormat.format("Составь маршрут по городу {0} на {1}.{2}. Приведи минимум 4 точки для посещения.", city, day, month);
+        final var mainText = MessageFormat.format("Составь маршрут по городу {0} на {1}. Приведи минимум 4 точки для посещения.", city, day);
 
         var additionalText = "";
         if (additionalInformation.isPresent()) {
             var info = additionalInformation.get().replaceAll("\n+", " ");
-            additionalText = MessageFormat.format("Учти следующие пожелания: {0}", info);
+            additionalText = MessageFormat.format(" Учти следующие пожелания: {0}.", info.toLowerCase());
         }
 
-        final var ending = " В ответе пришли массив из точек маршрута в формате JSON. Структура точки маршрута является следующей: { 'name': 'название точки маршрута', 'description': 'максимально подробное описание точки маршрута', 'latitude': 'Координата долготы для точки маршрута', 'longitude': 'Координата широты для точки маршрута', 'url': 'Ссылка на ресурс с описанием точки маршрута', 'date': 'Дата посещения точки в формате UTC', 'startTime': 'Время начала посещения точки в формате HH:mm','endTime': 'Время окончания посещения точки в формате HH:mm'}. Не используй символы « и ».";
+        final var ending = " В ответе пришли массив из точек маршрута в формате JSON. Структура точки маршрута является следующей: { 'name': 'название точки маршрута', 'description': 'максимально подробное описание точки маршрута', 'latitude': 'Координата долготы для точки маршрута', 'longitude': 'Координата широты для точки маршрута', 'url': 'Ссылка на ресурс с описанием точки маршрута', 'date': 'Дата посещения точки в формате UTC', 'startTime': 'Время начала посещения точки в формате HH:mm','endTime': 'Время окончания посещения точки в формате HH:mm'}.";
 
         return mainText + additionalText + ending;
     }
