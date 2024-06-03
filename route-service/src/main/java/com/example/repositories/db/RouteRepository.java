@@ -11,5 +11,5 @@ import java.util.UUID;
 
 public interface RouteRepository extends JpaRepository<Route, UUID> {
     List<Route> findByStartDateAfterAndUser(Date date, UserInfo user);
-    List<Route> findByStatusInOrStartDateBefore(RouteStatus[] statuses, Date date);
+    List<Route> findByStatusNotOrStartDateBefore(RouteStatus status, Date date);
 }

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public enum RouteStatus {
+    CREATED("CREATED"),
     PENDING("PENDING"),
     GENERATED("GENERATED"),
     FAILED("FAILED"),

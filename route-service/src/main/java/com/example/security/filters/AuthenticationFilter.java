@@ -8,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -22,6 +23,7 @@ import java.util.Optional;
 
 @Component
 @Setter
+@Slf4j
 public class AuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtils jwtUtils;
     private AuthenticationManager authenticationManager;
@@ -48,7 +50,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                 resultToken = authenticationManager.authenticate(authToken);
             }
         } catch (Exception e) {
-            logger.info("Token expired");
+            log.info("Token expired");
         } finally {
             SecurityContextHolder.getContext().setAuthentication(resultToken);
             doFilter(request, response, filterChain);

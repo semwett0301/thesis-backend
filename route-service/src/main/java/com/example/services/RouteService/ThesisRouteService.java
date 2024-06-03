@@ -4,17 +4,14 @@ import com.example.model.dto.request.RouteRequest;
 import com.example.model.dto.response.RouteResponse;
 import com.example.model.dto.response.SavedRoutesResponse;
 import com.example.model.entities.db.Route;
-import com.example.model.exceptions.GptNotWorkingException;
 import com.example.model.mappers.RouteMapper;
-import com.example.model.mappers.RoutePointMapper;
 import com.example.model.utils.RouteStatus;
 import com.example.repositories.db.CityRepository;
-import com.example.repositories.db.RoutePointRepository;
 import com.example.repositories.db.RouteRepository;
 import com.example.repositories.db.UserRepository;
-import com.example.services.GenerateService.GenerateService;
-import jakarta.transaction.Transactional;
+import com.example.utils.QueueUtils.QueueUtils;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -23,56 +20,34 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
 @Service
 @AllArgsConstructor
 public class ThesisRouteService implements RouteService {
-    private GenerateService generateService;
-
-    private UserRepository userRepository;
-    private RouteRepository routeRepository;
-    private RoutePointRepository routePointRepository;
-    private CityRepository cityRepository;
+    private final UserRepository userRepository;
+    private final RouteRepository routeRepository;
+    private final CityRepository cityRepository;
+    private final QueueUtils queueUtils;
 
     @Override
-    @Transactional
-    public RouteResponse createRoute(RouteRequest routeRequest) throws GptNotWorkingException {
-        return getRouteResponseAfterGeneration(routeRequest);
+    public RouteResponse createRoute(RouteRequest routeRequest) {
+        var route = saveRouteEntity(routeRequest);
+        queueUtils.scheduleGenerateTask(route.getId());
+        return RouteMapper.createRouteResponse(route, queueUtils.getQueueSize());
     }
 
     @Override
-    @Transactional
-    public RouteResponse createRoute(RouteRequest routeRequest, String username) throws GptNotWorkingException {
-        var routeResponse = getRouteResponseAfterGeneration(routeRequest);
+    public RouteResponse createRoute(RouteRequest routeRequest, String username) {
+        var route = saveRouteEntity(routeRequest, username);
+        queueUtils.scheduleGenerateTask(route.getId());
+        return RouteMapper.createRouteResponse(route, queueUtils.getQueueSize());
+    }
 
-        var startIata = routeRequest.getStart_city().getIata();
-        var endIata = routeRequest.getEnd_city().getIata();
-
-        var user = userRepository.findByUsername(username);
-        var startCity = cityRepository.findById(startIata);
-        var endCity = cityRepository.findById(endIata);
-
-        if (user.isPresent() && startCity.isPresent() && endCity.isPresent()) {
-            var route = RouteMapper.createRouteEntity(routeRequest);
-
-            route.setUser(user.get());
-            route.setStartCity(startCity.get());
-            route.setEndCity(endCity.get());
-
-            route.setStatus(RouteStatus.GENERATED);
-
-            final var routeResult = routeRepository.save(route);
-            routeResponse.setId(routeResult.getId());
-
-            var routePointsEntities = routeResponse.getRoute_points().stream()
-                    .map(routePointResponse -> RoutePointMapper.createRoutePoint(routePointResponse, routeResult))
-                    .toList();
-            routePointRepository.saveAll(routePointsEntities);
-        }
-
-        return routeResponse;
+    @Override
+    public RouteResponse getRoute(UUID id) {
+        var route = routeRepository.findById(id).orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Not found"));
+        return RouteMapper.createRouteResponse(route, queueUtils.getQueueSize());
     }
 
     @Override
@@ -82,12 +57,12 @@ public class ThesisRouteService implements RouteService {
 
         var routesRecently = routes.stream()
                 .filter(route -> route.getStatus().equals(RouteStatus.GENERATED))
-                .map(RouteMapper::createRouteResponse)
+                .map(route -> RouteMapper.createRouteResponse(route, queueUtils.getQueueSize()))
                 .toList();
 
         var routesSaved = routes.stream()
                 .filter(route -> route.getStatus().equals(RouteStatus.SAVED))
-                .map(RouteMapper::createRouteResponse)
+                .map(route -> RouteMapper.createRouteResponse(route, queueUtils.getQueueSize()))
                 .toList();
 
         return new SavedRoutesResponse(routesRecently, routesSaved);
@@ -100,26 +75,42 @@ public class ThesisRouteService implements RouteService {
         route.setStatus(RouteStatus.SAVED);
         routeRepository.save(route);
 
-        return RouteMapper.createRouteResponse(route);
+        return RouteMapper.createRouteResponse(route, queueUtils.getQueueSize());
     }
 
     @Scheduled(cron = "${routes.clear-cron}", zone = "${routes.timezone}")
     public void clearRoutes() {
-        RouteStatus[] statuses = {RouteStatus.GENERATED, RouteStatus.FAILED};
-        var routesNotSaved = routeRepository.findByStatusInOrStartDateBefore(statuses, new Date());
+        var routesNotSaved = routeRepository.findByStatusNotOrStartDateBefore(RouteStatus.SAVED, new Date());
         routeRepository.deleteAll(routesNotSaved);
-        System.out.println("COMPLETE");
     }
 
-    private RouteResponse getRouteResponseAfterGeneration(RouteRequest routeRequest) throws GptNotWorkingException {
-        var generatedRoutePoints = generateService.generate(routeRequest);
+    private Route saveRouteEntity(RouteRequest request, String username) {
+        var user = userRepository.findByUsername(username).orElseThrow(() -> new ResponseStatusException(FORBIDDEN, "Forbidden"));
+        var route = createRouteEntity(request);
 
-        var routePointsResponse = generatedRoutePoints.stream()
-                .map((route) -> RoutePointMapper.createRoutePointResponse(null, route))
-                .toList();
+        route.setUser(user);
+        return routeRepository.save(route);
+    }
 
-        return RouteMapper.createGeneratedRouteResponse(null, routeRequest, routePointsResponse);
+    private Route saveRouteEntity(RouteRequest request) {
+        var route = createRouteEntity(request);
+        return routeRepository.save(route);
+    }
 
+    private Route createRouteEntity(RouteRequest routeRequest) {
+        var startIata = routeRequest.getStart_city().getIata();
+        var endIata = routeRequest.getEnd_city().getIata();
+
+        var startCity = cityRepository.findById(startIata).orElseThrow(() -> new ResponseStatusException(BAD_REQUEST, "Bad request"));
+        var endCity = cityRepository.findById(endIata).orElseThrow(() -> new ResponseStatusException(BAD_REQUEST, "Bad request"));
+
+        var route = RouteMapper.createRouteEntity(routeRequest);
+
+        route.setStartCity(startCity);
+        route.setEndCity(endCity);
+        route.setStatus(RouteStatus.CREATED);
+
+        return route;
     }
 
     private Date getYesterday() {

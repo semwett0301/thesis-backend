@@ -6,9 +6,13 @@ import com.example.model.dto.gpt.GptResponse;
 import com.example.model.dto.gpt.GptRole;
 import com.example.model.dto.internal.GeneratedRoutePoint;
 import com.example.model.dto.request.RouteRequest;
+import com.example.model.dto.response.RouteResponse;
+import com.example.model.entities.db.Route;
 import com.example.model.exceptions.GptNotWorkingException;
+import com.example.model.exceptions.IncorrectGptAnswerException;
 import com.example.utils.GptApi.GptApi;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -43,8 +47,8 @@ public class YandexGenerateService implements GenerateService {
     }
 
     @Override
-    public List<GeneratedRoutePoint> generate(RouteRequest request) throws GptNotWorkingException {
-        final var requestMessages = getStartMessages(request);
+    public List<GeneratedRoutePoint> generate(Route route) throws GptNotWorkingException, IncorrectGptAnswerException {
+        final var requestMessages = getStartMessages(route);
 
         var gptRequest = new GptRequest(modelUri, completionOptions, requestMessages);
         var gptResponse = gptApi.getAnswerFromGpt(gptRequest);
@@ -52,8 +56,8 @@ public class YandexGenerateService implements GenerateService {
         final var firstRoutePoints = getRoutePointsFromMessage(gptResponse.getFirstMessage().orElseThrow(GptNotWorkingException::new));
         final List<GeneratedRoutePoint> result = new ArrayList<>(firstRoutePoints);
 
-        final LocalDate startLocalDate = LocalDate.parse(localDf.format(request.getStart_date()));
-        final LocalDate endLocalDate = LocalDate.parse(localDf.format(request.getEnd_date()));
+        final LocalDate startLocalDate = LocalDate.parse(localDf.format(route.getStartDate()));
+        final LocalDate endLocalDate = LocalDate.parse(localDf.format(route.getEndDate()));
 
         for (LocalDate date = startLocalDate.plusDays(1); date.isBefore(endLocalDate.plusDays(1)); date = date.plusDays(1)) {
             var continueRequestMessage = getContinueUserMessage(date);
@@ -68,9 +72,23 @@ public class YandexGenerateService implements GenerateService {
         return result;
     }
 
-    private List<GeneratedRoutePoint> getRoutePointsFromMessage(GptResponse.MessageWrapper message) {
-        var text = message.getMessage().getText();
-        var json = text.substring(text.lastIndexOf('['), text.lastIndexOf(']') + 1)
+    private List<GeneratedRoutePoint> getRoutePointsFromMessage(GptResponse.MessageWrapper message) throws IncorrectGptAnswerException {
+        try {
+            var json = prepareJson(message.getMessage().getText());
+            return List.of(gson.fromJson(json, GeneratedRoutePoint[].class));
+        } catch (JsonSyntaxException e) {
+            throw new IncorrectGptAnswerException(e.getMessage());
+        }
+    }
+
+    private String prepareJson(String initialText) {
+        var leftIndex = initialText.lastIndexOf('[');
+        var rightIndex = initialText.lastIndexOf(']');
+
+        var leftBorder = leftIndex != -1 ? leftIndex : 0;
+        var rightBorder = rightIndex != -1 ? rightIndex + 1 : initialText.length();
+
+        return initialText.substring(leftBorder, rightBorder)
                 .replaceAll("'", "\"")
                 .replaceAll("»,", "\"")
                 .replaceAll("»", "")
@@ -82,19 +100,18 @@ public class YandexGenerateService implements GenerateService {
                 .replaceAll("\s+}\s+", "}")
                 .replaceAll("\s+\"", "\"")
                 .replaceAll("\"\s+", "\"");
-        return List.of(gson.fromJson(json, GeneratedRoutePoint[].class));
     }
 
-    private List<GptMessage> getStartMessages(RouteRequest request) {
+    private List<GptMessage> getStartMessages(Route route) {
         final List<GptMessage> result = new ArrayList<>();
 
         final String gptContext = "Ты ассистент по путешествиям. Ты умеешь формировать маршруты от точки к точке по городу по часам, при этом учитывая последовательность времени и расстояние между точками. Все ответы ты отдаешь только в JSON формате и не умеешь писать обычный текст";
 
-        final Optional<String> additional = request.getAdditional_information() != null ? Optional.of(request.getAdditional_information()) : Optional.empty();
+        final Optional<String> additional = route.getAdditionalInformation() != null ? Optional.of(route.getAdditionalInformation()) : Optional.empty();
 
         final GptMessage systemMessage = new GptMessage(GptRole.SYSTEM, gptContext);
-        final GptMessage userMessage = new GptMessage(GptRole.USER, getStartUserMessage(LocalDate.parse(localDf.format(request.getStart_date())),
-                request.getEnd_city().getName(),
+        final GptMessage userMessage = new GptMessage(GptRole.USER, getStartUserMessage(LocalDate.parse(localDf.format(route.getStartDate())),
+                route.getEndCity().getName(),
                 additional));
 
         result.add(systemMessage);

@@ -38,6 +38,7 @@ public class Route extends BaseEntity {
 
     @NotNull
     @Column(name = "status")
+    @Enumerated(EnumType.STRING)
     private RouteStatus status;
 
     @OneToMany

@@ -3,7 +3,7 @@ server:
 
 yandex-gpt:
   uri: "https://llm.api.cloud.yandex.net/foundationModels/v1/completion"
-  iam-token: "t1.9euelZqQl5nHnZDNnprNm86Px46blO3rnpWazYyMx5bPmZqdjseXyZ6XyZDl8_cYYiBN-e97GUFr_t3z91gQHk3573sZQWv-zef1656VmseanYuay5LLm5iUnZfNjpGL7_zN5_XrnpWaxo7HnZbPmJXOl5ybyZGblcvv_cXrnpWax5qdi5rLksubmJSdl82OkYs.50vsDZQOfJM8LwN77ngdx_gFTB2fKLhFj5dV-JCFy38Hcaq9klOMNXhPpvEQef9Tgk2bQyM9XqEH1TM06h4GDQ"
+  iam-token: "t1.9euelZqOkZfOi5yPk47JkpKdmMiJie3rnpWazYyMx5bPmZqdjseXyZ6XyZDl9PcuGwdN-e9IaFnN3fT3bkkETfnvSGhZzc3n9euelZqNmIyRzo2Nk86LmJHIjMidk-_8zef1656VmsaOx52Wz5iVzpecm8mRm5XL7_3F656Vmo2YjJHOjY2TzouYkciMyJ2T.CsNBXXU2BWjcYFI7YwtcEzz918Wo4t-saCGIM2BYnsOVRDXV1dpeGVeu3BkS4gwG-jq5NsZghEUKBm0SjBLfAQ"
   model-uri: "gpt://b1g3bmolh8ou09grrbt8/yandexgpt/latest"
   stream: false
   temperature: 0.3
@@ -12,6 +12,10 @@ yandex-gpt:
 routes:
   clear-cron: "0 0 0 * * *"
   timezone: "Europe/Moscow"
+
+redis-queue:
+  topic: generating
+  name: generating-queue
 
 jwt:
   access-time: 600000
