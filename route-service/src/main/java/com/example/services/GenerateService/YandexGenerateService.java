@@ -100,8 +100,7 @@ public class YandexGenerateService implements GenerateService {
                 .replaceAll("\s+\\{\s+", "{")
                 .replaceAll("\s+}\s+", "}")
                 .replaceAll("\s+\"", "\"")
-                .replaceAll("\"\s+", "\"")
-                .replaceAll("[^:\"]","");
+                .replaceAll("\"\s+", "\"");
     }
 
     private List<GptMessage> getStartMessages(Route route) {

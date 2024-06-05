@@ -21,8 +21,8 @@ public class AccommodationsController {
 
     @GetMapping
     public List<AccommodationResponse> getAccommodations(
-            @RequestParam(name = "start_date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date startDate,
-            @RequestParam(name = "end_date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date endDate,
+            @RequestParam(name = "start_date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+            @RequestParam(name = "end_date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate,
             @RequestParam(name = "max_price") Integer maxPrice,
             @RequestParam(name = "city_iata") String cityIata
     ) {
