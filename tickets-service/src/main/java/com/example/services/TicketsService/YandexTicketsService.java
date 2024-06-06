@@ -9,6 +9,7 @@ import io.netty.util.internal.ThreadLocalRandom;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,13 +22,14 @@ public class YandexTicketsService implements TicketsService {
 
     private final String logoUrl;
 
-    private final String link;
+    private final String baseLink;
 
-    public YandexTicketsService(YandexApi yandexApi, @Value("${yandex.source}") String source, @Value("${yandex.logo-url}") String logoUrl, @Value("${yandex.link}") String link) {
+
+    public YandexTicketsService(YandexApi yandexApi, @Value("${yandex.source}") String source, @Value("${yandex.logo-url}") String logoUrl, @Value("${yandex.base-link}") String baseLink) {
         this.yandexApi = yandexApi;
         this.source = source;
         this.logoUrl = logoUrl;
-        this.link = link;
+        this.baseLink = baseLink;
     }
 
     @Override
@@ -44,17 +46,20 @@ public class YandexTicketsService implements TicketsService {
             var firstSegment = ticketTo.getSegments().get(0);
             var secondSegment = ticketFrom.getSegments().get(0);
 
-            var firstPrice = 0.38 * ticketsInternalRequest.getMaxPrice();
-            var secondPrice = 0.44 * ticketsInternalRequest.getMaxPrice();
+            var firstPrice = 0.2483 * ticketsInternalRequest.getMaxPrice();
+            var secondPrice = 0.3574 * ticketsInternalRequest.getMaxPrice();
 
-            result.add(getTicketResponseFromSegment(ticketsInternalRequest.getStartCity(), ticketsInternalRequest.getEndCity(), firstSegment, (int) firstPrice));
-            result.add(getTicketResponseFromSegment(ticketsInternalRequest.getEndCity(), ticketsInternalRequest.getStartCity(), secondSegment, (int) secondPrice));
+            var firstLink = MessageFormat.format("{0}/{1}", baseLink, firstSegment.getThread().getUid());
+            var secondLink = MessageFormat.format("{0}/{1}", baseLink, firstSegment.getThread().getUid());
+
+            result.add(getTicketResponseFromSegment(ticketsInternalRequest.getStartCity(), ticketsInternalRequest.getEndCity(), firstSegment, (int) Math.floor(firstPrice), firstLink));
+            result.add(getTicketResponseFromSegment(ticketsInternalRequest.getEndCity(), ticketsInternalRequest.getStartCity(), secondSegment, (int) Math.floor(secondPrice), secondLink));
         }
 
         return result;
     }
 
-    private TicketResponse getTicketResponseFromSegment(String startCity, String endCity, YandexTicketsResponse.Segment segment, Integer price) {
+    private TicketResponse getTicketResponseFromSegment(String startCity, String endCity, YandexTicketsResponse.Segment segment, Integer price, String link) {
         var df = new SimpleDateFormat("HH:mm");
 
         return new TicketResponse(logoUrl,

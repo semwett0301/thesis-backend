@@ -12,7 +12,7 @@ yandex:
   uri: https://api.rasp.yandex.net/v3.0
   token: 68accdce-21bf-4120-94c1-0600c3ebdc60
   source: "Яндекс.Расписание"
-  link: https://rasp.yandex.ru/
+  base-link: https://rasp.yandex.ru/thread
   logo-url: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREiJ55wkqT8qnUomej7T9VKcijCGJnu-N01znEcwxBsQ&s
 
 spring:

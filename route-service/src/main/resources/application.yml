@@ -3,7 +3,7 @@ server:
 
 yandex-gpt:
   uri: "https://llm.api.cloud.yandex.net/foundationModels/v1/completion"
-  iam-token: "t1.9euelZrHzJaKns7HnJebiZ7JlJKMnu3rnpWazYyMx5bPmZqdjseXyZ6XyZDl8_c5TH5M-e80Xmsp_N3z93l6e0z57zReayn8zef1656VmomUjIqMnJvKyJGPkZvLkpqJ7_zN5_XrnpWaxo7HnZbPmJXOl5ybyZGblcvv_cXrnpWaiZSMioycm8rIkY-Rm8uSmok.WB--9pLWQn4COXEi5aPTMibgE0DllD1rQBquUqFvbbNk1bGGIRcKlnNk0hRdT5QqqOSZHqBgMGSamydQD1XeBQ"
+  iam-token: "t1.9euelZqLkJ3MzpScmMqXy5nHyJ3LmO3rnpWazYyMx5bPmZqdjseXyZ6XyZDl8_dafnhM-e9STnko_N3z9xotdkz571JOeSj8zef1656VmpeOk5ySlZHNnInLxpySnpWa7_zN5_XrnpWaxo7HnZbPmJXOl5ybyZGblcvv_cXrnpWal46TnJKVkc2cicvGnJKelZo.tdFz1EbLMyVTpCa8WB2vDDEnFxsAf-ivs3uhKA1PHoho7d1RaiUarYUhS3rSJ_ir5N4eM1g_GToz3dIX5BiNAg"
   model-uri: "gpt://b1g3bmolh8ou09grrbt8/yandexgpt/latest"
   stream: false
   temperature: 0.3
