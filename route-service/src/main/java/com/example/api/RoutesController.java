@@ -6,6 +6,7 @@ import com.example.model.dto.response.SavedRoutesResponse;
 import com.example.services.RouteService.RouteService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -22,6 +23,7 @@ public class RoutesController {
     private final RouteService routeService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public RouteResponse createRoute(@AuthenticationPrincipal Optional<String> username, @Valid @RequestBody RouteRequest routeRequest) {
         return username.isEmpty() ? routeService.createRoute(routeRequest) : routeService.createRoute(routeRequest, username.get());
     }
