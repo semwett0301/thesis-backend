@@ -3,6 +3,7 @@ package com.example.utils;
 import com.example.model.dto.external.YandexAccommodationResponse;
 import com.example.model.dto.external.YandexSuggestionResponse;
 import com.example.model.dto.internal.AccommodationRequest;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -13,10 +14,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Component
+@Setter
 public class YandexApi {
-    private final WebClient webClientSuggestion;
+    private WebClient webClientSuggestion;
 
-    private final WebClient webClientResult;
+    private WebClient webClientResult;
 
     private final String token;
 
